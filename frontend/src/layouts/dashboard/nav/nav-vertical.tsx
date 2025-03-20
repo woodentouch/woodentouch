@@ -40,7 +40,7 @@ export default function NavVertical(props: Props) {
 	}, [routeToMenuFn, permissionRoutes]);*/
 	const menuList = [
 		{
-			key: "/dashboard",
+			key: "/dashboard/analysis",
 			label: "Dashboard",
 			icon: <DashboardOutlined />,
 		},
@@ -48,11 +48,6 @@ export default function NavVertical(props: Props) {
 			key: "/management/system/organization",
 			label: "Ventes",
 			icon: <UserOutlined />,
-		},
-		{
-			key: "/dashboard/analysis",
-			label: "Analyses",
-			icon:<BarChartOutlined />,
 		},
 		{
 			key: "/management/system/permission",
