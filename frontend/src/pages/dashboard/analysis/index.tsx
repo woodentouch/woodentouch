@@ -15,7 +15,7 @@ import AnalysisOrderTimeline from "./analysis-order-timeline";
 import AnalysisTasks from "./analysis-tasks";
 import AnalysisTrafficCard from "./analysis-traffic-card";
 import CurrentDownload from "@/pages/dashboard/workbench/current-download";
-import NewInvoice from "./new-invoice";
+import NewInvoice from "../workbench/new-invoice";
 
 function Analysis() {
 	return (
