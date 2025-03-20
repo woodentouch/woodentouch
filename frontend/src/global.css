@@ -53,3 +53,8 @@ html.dark {
   border-radius: 10px;
   background: var(--c-scrollbar-hover);
 }
+
+/* 🚫 Cacher la section "kanban" dans la sidebar */
+.ant-menu-item[title="Stock"] {
+  display: none !important;
+}

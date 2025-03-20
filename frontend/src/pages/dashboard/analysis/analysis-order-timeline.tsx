@@ -1,7 +1,7 @@
 import { themeVars } from "@/theme/theme.css";
 import { Timeline, Typography } from "antd";
 
-export default function AnalysisOrderTimeline() {
+export default function AnalysisOrderTimelineVente() {
 	return (
 		<Timeline
 			items={[

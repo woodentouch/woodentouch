@@ -81,7 +81,7 @@ function LoginForm() {
 							>
 								{t("sys.login.forgetPassword")}
 							</Button>
-						</Col>
+						</Col>	
 					</Row>
 				</Form.Item>
 				<Form.Item>
@@ -90,6 +90,9 @@ function LoginForm() {
 					</Button>
 				</Form.Item>
 
+
+				
+{/* on masque le sign in avec google et compagnie
 				<Row align="middle" gutter={8}>
 					<Col span={9} flex="1">
 						<Button className="w-full !text-sm" onClick={() => setLoginState(LoginStateEnum.MOBILE)}>
@@ -104,15 +107,15 @@ function LoginForm() {
 					<Col span={6} flex="1" onClick={() => setLoginState(LoginStateEnum.REGISTER)}>
 						<Button className="w-full !text-sm">{t("sys.login.signUpFormTitle")}</Button>
 					</Col>
-				</Row>
+				</Row> */}
 
-				<Divider className="!text-xs">{t("sys.login.otherSignIn")}</Divider>
+				{/* <Divider className="!text-xs">{t("sys.login.otherSignIn")}</Divider> */}
 
-				<div className="flex cursor-pointer justify-around text-2xl">
+				{/* <div className="flex cursor-pointer justify-around text-2xl">
 					<AiFillGithub />
 					<AiFillWechat />
 					<AiFillGoogleCircle />
-				</div>
+				</div> */}
 			</Form>
 		</>
 	);

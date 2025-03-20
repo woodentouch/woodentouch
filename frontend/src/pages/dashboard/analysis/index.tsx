@@ -14,17 +14,19 @@ import AnalysisNews from "./analysis-news";
 import AnalysisOrderTimeline from "./analysis-order-timeline";
 import AnalysisTasks from "./analysis-tasks";
 import AnalysisTrafficCard from "./analysis-traffic-card";
+import CurrentDownload from "@/pages/dashboard/workbench/current-download";
+import NewInvoice from "./new-invoice";
 
 function Analysis() {
 	return (
 		<div className="p-2">
-			<Typography.Title level={2}>Hi, Welcome back 👋</Typography.Title>
+			<Typography.Title level={2}>Hi, Welcome back woody woodies🪵</Typography.Title>
 			<Row gutter={[16, 16]} justify="center">
 				<Col lg={6} md={12} span={24}>
 					<AnalysisCard
 						cover={glass_bag}
-						title="714k"
-						subtitle="Weekly Sales"
+						title="48K"
+						subtitle="Chiffre d'affaire"
 						style={{
 							color: themeVars.colors.palette.success.dark,
 							backgroundColor: `rgba(${themeVars.colors.palette.success.defaultChannel}, .2)`,
@@ -34,8 +36,8 @@ function Analysis() {
 				<Col lg={6} md={12} span={24}>
 					<AnalysisCard
 						cover={glass_users}
-						title="1.35m"
-						subtitle="New Users"
+						title="1200"
+						subtitle="clients cette année"
 						style={{
 							color: themeVars.colors.palette.info.dark,
 							backgroundColor: `rgba(${themeVars.colors.palette.info.defaultChannel}, .2)`,
@@ -45,8 +47,8 @@ function Analysis() {
 				<Col lg={6} md={12} span={24}>
 					<AnalysisCard
 						cover={glass_buy}
-						title="1.72m"
-						subtitle="New Orders"
+						title="13 340€"
+						subtitle="Stock Actuel"
 						style={{
 							color: themeVars.colors.palette.warning.dark,
 							backgroundColor: `rgba(${themeVars.colors.palette.warning.defaultChannel}, .2)`,
@@ -57,7 +59,7 @@ function Analysis() {
 					<AnalysisCard
 						cover={glass_message}
 						title="234"
-						subtitle="Bug Reports"
+						subtitle="Ventes ce mois"
 						style={{
 							color: themeVars.colors.palette.error.dark,
 							backgroundColor: `rgba(${themeVars.colors.palette.error.defaultChannel}, .2)`,
@@ -65,15 +67,28 @@ function Analysis() {
 					/>
 				</Col>
 			</Row>
+			
+			<Row gutter={[16, 16]} className="mt-8" justify="center">
+				<Col span={24} lg={12} xl={16}>
+					{/* <Card title=""> */}
+						<NewInvoice />
+					{/* </Card> */}
+				</Col>
+				{/* <Col span={24} lg={12} xl={8}>
+					<Card title="Plateforme de ventes">
+						<ChartBar />
+					</Card>
+				</Col> */}
+			</Row>
 
 			<Row gutter={[16, 16]} className="mt-8" justify="center">
 				<Col span={24} lg={12} xl={16}>
-					<Card title="Website Visits">
-						<ChartMixed />
+					<Card title="Best-sellers de la derniére convention">
+						<ChartBar />
 					</Card>
 				</Col>
 				<Col span={24} lg={12} xl={8}>
-					<Card title="Current Visits">
+					<Card title="Manga 2025">
 						<ChartPie />
 					</Card>
 				</Col>
@@ -81,75 +96,38 @@ function Analysis() {
 
 			<Row gutter={[16, 16]} className="mt-8" justify="center">
 				<Col span={24} lg={12} xl={16}>
-					<Card title="Conversion Rates">
+					 <Card title="Best Sellers 2025"> 
+						<ChartBar />
+					 </Card> 
+				</Col>
+				<Col span={24} lg={12} xl={8}>
+					<Card title="Plateforme de ventes">
+						<ChartPie />
+					</Card>
+				</Col>
+			</Row>
+
+			{/* <Row gutter={[16, 16]} className="mt-8">
+				<Col span={24} lg={12} xl={8}>
+					<Card title="Historique des Ventes">
+						<AnalysisOrderTimeline	 />
+					</Card>
+				</Col>
+			</Row>
+
+			<Row gutter={[16, 16]} className="mt-8" justify="center">
+				<Col span={24} lg={12} xl={16}>
+					<Card title="Best-sellers de la derniére convention">
 						<ChartBar />
 					</Card>
 				</Col>
 				<Col span={24} lg={12} xl={8}>
-					<Card title="Current Subject">
-						<ChartRadar />
+					<Card title="Mode de Paiement">
+						<ChartPie />
 					</Card>
 				</Col>
-			</Row>
+			</Row> */}
 
-			<Row gutter={[16, 16]} className="mt-8">
-				<Col span={24} lg={12} xl={16}>
-					<Card title="News">
-						<AnalysisNews />
-					</Card>
-				</Col>
-				<Col span={24} lg={12} xl={8}>
-					<Card title="Order Timeline">
-						<AnalysisOrderTimeline />
-					</Card>
-				</Col>
-			</Row>
-
-			<Row gutter={[16, 16]} className="my-8">
-				<Col span={24} lg={12} xl={8}>
-					<Card title="Traffic by Site">
-						<Row gutter={[16, 16]}>
-							<Col span={12}>
-								<AnalysisTrafficCard
-									icon={<Iconify icon="bxl:facebook" size={32} color="#1877f2" />}
-									title="1.95k"
-									subtitle="FaceBook"
-								/>
-							</Col>
-
-							<Col span={12}>
-								<AnalysisTrafficCard
-									icon={<Iconify icon="ant-design:google-outlined" size={32} color="#df3e30" />}
-									title="9.12k"
-									subtitle="Google"
-								/>
-							</Col>
-
-							<Col span={12}>
-								<AnalysisTrafficCard
-									icon={<Iconify icon="eva:linkedin-fill" size={32} color="#006097" />}
-									title="6.98k"
-									subtitle="Linkedin"
-								/>
-							</Col>
-
-							<Col span={12}>
-								<AnalysisTrafficCard
-									icon={<Iconify icon="eva:twitter-fill" size={32} color="#1c9cea" />}
-									title="8.49k"
-									subtitle="Twitter"
-								/>
-							</Col>
-						</Row>
-					</Card>
-				</Col>
-
-				<Col span={24} lg={12} xl={16}>
-					<Card title="Tasks">
-						<AnalysisTasks />
-					</Card>
-				</Col>
-			</Row>
 		</div>
 	);
 }

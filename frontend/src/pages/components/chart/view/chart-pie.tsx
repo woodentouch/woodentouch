@@ -4,7 +4,7 @@ import useChart from "@/components/chart/useChart";
 const series = [44, 55, 13, 43];
 export default function ChartPie() {
 	const chartOptions = useChart({
-		labels: ["America", "Asia", "Europe", "Africa"],
+		labels: ["DBZ", "OnePiece", "Europe", "Africa"],
 		legend: {
 			horizontalAlign: "center",
 		},

@@ -23,6 +23,7 @@ const dashboard: AppRouteObject = {
 			<SvgIcon icon="ic-analysis" className="ant-menu-item-icon" size="24" />
 		),
 		key: "/dashboard",
+		hideMenu: true,
 	},
 	children: [
 		{
@@ -32,7 +33,9 @@ const dashboard: AppRouteObject = {
 		{
 			path: "workbench",
 			element: <HomePage />,
+			
 			meta: { label: "sys.menu.workbench", key: "/dashboard/workbench" },
+			
 		},
 		{
 			path: "analysis",

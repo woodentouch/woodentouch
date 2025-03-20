@@ -1,8 +1,8 @@
-import { NavLink } from "react-router";
+ import { NavLink } from "react-router";
 
 import { useTheme } from "@/theme/hooks";
 
-import { Iconify } from "../icon";
+ import { Iconify } from "../icon";
 
 interface Props {
 	size?: number | string;
@@ -17,4 +17,5 @@ function Logo({ size = 50 }: Props) {
 	);
 }
 
-export default Logo;
+ export default Logo;
+
