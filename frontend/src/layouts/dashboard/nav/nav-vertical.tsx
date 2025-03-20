@@ -45,7 +45,7 @@ export default function NavVertical(props: Props) {
 			icon: <DashboardOutlined />,
 		},
 		{
-			key: "/ventes",
+			key: "/management/system/organization",
 			label: "Ventes",
 			icon: <UserOutlined />,
 		},
@@ -55,12 +55,12 @@ export default function NavVertical(props: Props) {
 			icon:<BarChartOutlined />,
 		},
 		{
-			key: "/stock",
+			key: "/management/system/permission",
 			label: "Stock",
 			icon:<BarChartOutlined />,
 		},
 		{
-			key: "/stats",
+			key: "/components/chart",
 			label: "Statistiques",
 			icon:<BarChartOutlined />,
 		},
