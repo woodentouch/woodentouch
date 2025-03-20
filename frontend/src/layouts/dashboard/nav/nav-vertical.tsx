@@ -12,6 +12,7 @@ import { NAV_WIDTH } from "../config";
 import NavLogo from "./nav-logo";
 
 import { ThemeLayout, ThemeMode } from "#/enum";
+import { BarChartOutlined, DashboardOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
 
 const { Sider } = Layout;
 
@@ -33,10 +34,38 @@ export default function NavVertical(props: Props) {
 
 	const collapsed = useMemo(() => themeLayout === ThemeLayout.Mini, [themeLayout]);
 
-	const menuList = useMemo(() => {
+	/*const menuList = useMemo(() => {
 		const menuRoutes = menuFilter(permissionRoutes);
 		return routeToMenuFn(menuRoutes);
-	}, [routeToMenuFn, permissionRoutes]);
+	}, [routeToMenuFn, permissionRoutes]);*/
+	const menuList = [
+		{
+			key: "/dashboard",
+			label: "Dashboard",
+			icon: <DashboardOutlined />,
+		},
+		{
+			key: "/ventes",
+			label: "Ventes",
+			icon: <UserOutlined />,
+		},
+		{
+			key: "/dashboard/analysis",
+			label: "Analyses",
+			icon:<BarChartOutlined />,
+		},
+		{
+			key: "/stock",
+			label: "Stock",
+			icon:<BarChartOutlined />,
+		},
+		{
+			key: "/stats",
+			label: "Statistiques",
+			icon:<BarChartOutlined />,
+		},
+	];
+	
 
 	const selectedKeys = useMemo(() => [pathname], [pathname]);
 
@@ -94,14 +123,9 @@ export default function NavVertical(props: Props) {
 
 				<Scrollbar>
 					<Menu
-						mode="inline"
-						items={menuList}
-						theme={sidebarTheme}
-						selectedKeys={selectedKeys}
-						openKeys={openKeys}
-						onOpenChange={handleOpenChange}
-						className="!border-none"
-						onClick={onClick}
+    					mode="inline"
+    					items={menuList}
+    					onClick={onClick}
 					/>
 				</Scrollbar>
 			</div>
