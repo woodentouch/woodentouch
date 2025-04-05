@@ -7,8 +7,20 @@ import { MotionLazy } from "./components/animate/motion-lazy";
 import Toast from "./components/toast";
 import { AntdAdapter } from "./theme/adapter/antd.adapter";
 import { ThemeProvider } from "./theme/theme-provider";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function App() {
+   const [message,setMessage] = useState("");
+   useEffect(()=>{
+	axios.get("")// url API
+	.then(response => setMessage(response.data.message))
+	.catch(error => console.error("Erreur:", error));
+   },[]);
+
+
+
+
 	return (
 		<ThemeProvider adapters={[AntdAdapter]}>
 			<MotionLazy>
@@ -20,8 +32,11 @@ function App() {
 
 				<Router />
 			</MotionLazy>
+			<div>{message}</div>
 		</ThemeProvider>
 	);
+
+	//return <div>{message}</div>;
 }
 
 export default App;
