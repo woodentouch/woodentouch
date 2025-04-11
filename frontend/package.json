@@ -6,9 +6,10 @@
 	"homepage": "https://github.com/d3george/slash-admin",
 	"scripts": {
 		"dev": "vite",
-		"build": "tsc && vite build",
-		"preview": "vite preview",
-		"preinstall": "echo 'Skipping lefthook install in production'"
+  "build": "tsc && vite build",
+  "start": "serve -s dist",
+  "preview": "vite preview",
+  "preinstall": "echo 'Skipping lefthook install in production'"
 	},
 	"dependencies": {
 		"@ant-design/cssinjs": "^1.17.2",
@@ -34,7 +35,7 @@
 		"@vercel/analytics": "^1.2.2",
 		"@vitejs/plugin-react": "^4.1.0",
 		"antd": "^5.9.3",
-		"apexcharts": "^3.43.0",
+		"apexcharts": "^4.5.0",
 		"autosuggest-highlight": "^3.3.4",
 		"axios": "^1.5.1",
 		"classnames": "^2.3.2",
@@ -65,6 +66,7 @@
 		"remark-gfm": "^3.0.1",
 		"reset-css": "^5.0.2",
 		"screenfull": "^6.0.2",
+		"serve": "^14.2.4",
 		"simplebar-react": "^3.2.4",
 		"sonner": "^1.7.0",
 		"styled-components": "^6.0.9",
@@ -106,6 +108,8 @@
 		"workerDirectory": "public"
 	},
 	"commitlint": {
-		"extends": ["@commitlint/config-conventional"]
+		"extends": [
+			"@commitlint/config-conventional"
+		]
 	}
 }
