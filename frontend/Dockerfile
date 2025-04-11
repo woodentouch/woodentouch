@@ -1,27 +1,21 @@
 # Stage 1: build stage
-FROM node:20-alpine as build-stage
-
+FROM node:22-alpine as build-stage
 WORKDIR /app
-
 ENV NODE_OPTIONS=--max_old_space_size=8192
 
-# Copie des fichiers de dépendances
+# Copie le bon lockfile
 COPY package.json package-lock.json ./
 
-# Installation des dépendances avec npm
+# Utilisation de npm, pas pnpm !
 RUN npm ci
 
-# Copie du reste des fichiers
-COPY . .
-
-# Build du projet
+COPY . ./
 RUN npm run build
-RUN echo "✅ Build success 🎉"
+RUN echo "✅ build successful 🎉"
 
-# Stage 2: production avec nginx
-FROM nginx:alpine as production-stage
-
+# Stage 2: production
+FROM nginx:latest as production-stage
 COPY --from=build-stage /app/dist /usr/share/nginx/html
-
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
+RUN echo "✅ deploy to nginx successful 🎉"
