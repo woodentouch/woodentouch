@@ -1,9 +1,11 @@
 package com.wooden.project.controller;
 
+
 import com.wooden.project.service.StatisticsService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 @RequestMapping("/api/stats")
@@ -19,6 +21,7 @@ public class StatsController {
     public double getWeeklySales() {
         return statisticsService.getWeeklySales();
     }
+
 
     @GetMapping("/getNewClients")
     public int getNewClients() {
@@ -37,7 +40,7 @@ public class StatsController {
 
     @GetMapping("/getChiffreAffaire")
     public double getChiffreAffaire() {
-        return statisticsService.getChiffreAffaire();
+        return (int) statisticsService.getChiffreAffaire();
     }
 
 
