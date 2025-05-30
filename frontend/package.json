@@ -6,10 +6,10 @@
 	"homepage": "https://github.com/d3george/slash-admin",
 	"scripts": {
 		"dev": "vite",
-  "build": "tsc && vite build",
-  "start": "serve -s dist",
-  "preview": "vite preview",
-  "preinstall": "echo 'Skipping lefthook install in production'"
+		"build": "tsc && vite build",
+		"start": "serve -s dist",
+		"preview": "vite preview",
+		"preinstall": "echo 'Skipping lefthook install in production'"
 	},
 	"dependencies": {
 		"@ant-design/cssinjs": "^1.17.2",
@@ -31,7 +31,7 @@
 		"@tanstack/react-query": "^5.50.1",
 		"@tanstack/react-query-devtools": "^5.50.1",
 		"@vanilla-extract/css": "^1.17.0",
-		"@vanilla-extract/vite-plugin": "^4.0.19",
+		"@vanilla-extract/vite-plugin": "^5.0.3",
 		"@vercel/analytics": "^1.2.2",
 		"@vitejs/plugin-react": "^4.1.0",
 		"antd": "^5.9.3",
@@ -58,7 +58,7 @@
 		"react-icons": "^4.11.0",
 		"react-markdown": "^8.0.7",
 		"react-organizational-chart": "^2.2.1",
-		"react-quill": "^2.0.0",
+		"react-quill": "^0.0.2",
 		"react-router": "^7.0.2",
 		"react-use": "^17.4.0",
 		"rehype-highlight": "^6.0.0",
@@ -96,14 +96,13 @@
 		"tailwindcss": "^3.3.3",
 		"ts-node": "^10.9.1",
 		"typescript": "^5.2.2",
-		"vite": "^5.4.9",
-		"vite-plugin-svg-icons": "^2.0.1",
+		"vite": "^6.3.5",
+		"vite-plugin-svg-icons": "^0.1.0",
 		"vite-tsconfig-paths": "^5.0.1"
 	},
 	"engines": {
-		"node": "20.*"
+		"node": ">=20.*"
 	},
-
 	"msw": {
 		"workerDirectory": "public"
 	},
