@@ -16,7 +16,8 @@ const Scrollbar = forwardRef<HTMLElement, ScrollbarProps>(
 		return (
 			<ScrollbarRoot
 				fillContainer={fillContainer}
-				scrollableNodeProps={{ ref }}
+				scrollableNodeRef={ref}
+
 				clickOnTrack={false}
 				{...other}
 				className={cn("", className)}
