@@ -1,9 +1,12 @@
 declare module 'simplebar-react' {
-  import { ComponentType } from 'react';
-  interface SimpleBarProps {
+  import * as React from 'react';
+  export interface SimplebarProps {
     children?: React.ReactNode;
-    // ajoute d'autres props si besoin
+    style?: React.CSSProperties;
+    className?: string;
+    // Ajoute ici les autres props si tu les utilises vraiment
+    [key: string]: any;
   }
-  const SimpleBar: ComponentType<SimpleBarProps>;
+  const SimpleBar: React.FC<SimplebarProps>;
   export default SimpleBar;
 }

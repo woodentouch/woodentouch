@@ -1,6 +1,7 @@
 import { cn } from "@/utils";
 import { forwardRef } from "react";
-import SimpleBar, { type Props as SimplebarProps } from "simplebar-react";
+import SimpleBar from "simplebar-react";
+import type { SimplebarProps } from "simplebar-react";
 import styled from "styled-components";
 
 export type ScrollbarProps = SimplebarProps & {
