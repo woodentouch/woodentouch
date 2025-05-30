@@ -71,7 +71,7 @@ function Analysis() {
 			<Row gutter={[16, 16]} className="mt-8" justify="center">
 				<Col span={24} lg={12} xl={16}>
 					{/* <Card title=""> */}
-						/*<NewInvoice />*/
+					{/*<NewInvoice />*/}
 					{/* </Card> */}
 				</Col>
 				{/* <Col span={24} lg={12} xl={8}>
