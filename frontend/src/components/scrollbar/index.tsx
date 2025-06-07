@@ -5,34 +5,33 @@ import type { SimplebarProps } from "simplebar-react";
 import styled from "styled-components";
 
 export type ScrollbarProps = SimplebarProps & {
-	fillContainer?: boolean;
+  fillContainer?: boolean;
 };
 
 /**
  * https://www.npmjs.com/package/simplebar-react?activeTab=readme
  */
 const Scrollbar = forwardRef<HTMLElement, ScrollbarProps>(
-	({ children, className, fillContainer = true, ...other }, ref) => {
-		return (
-			<ScrollbarRoot
-				fillContainer={fillContainer}
-				scrollableNodeRef={ref}
-
-				clickOnTrack={false}
-				{...other}
-				className={cn("", className)}
-			>
-				{children}
-			</ScrollbarRoot>
-		);
-	},
+  ({ children, className, fillContainer = true, ...other }, ref) => {
+    return (
+      <ScrollbarRoot
+        fillContainer={fillContainer}
+        scrollableNodeRef={ref} // utilise scrollableNodeRef au lieu de scrollableNodeProps
+        clickOnTrack={false}
+        {...other}
+        className={cn("", className)}
+      >
+        {children}
+      </ScrollbarRoot>
+    );
+  }
 );
 
 export default Scrollbar;
 
 const ScrollbarRoot = styled(SimpleBar).withConfig({
-	shouldForwardProp: (prop: string) => !["fillContainer"].includes(prop),
-	displayName: "ScrollbarRoot",
+  shouldForwardProp: (prop: string) => !["fillContainer"].includes(prop),
+  displayName: "ScrollbarRoot",
 })<Pick<ScrollbarProps, "fillContainer">>`
   min-width: 0;
   min-height: 0;
@@ -42,8 +41,8 @@ const ScrollbarRoot = styled(SimpleBar).withConfig({
   flex-direction: column;
 
   ${({ fillContainer }) =>
-		fillContainer &&
-		`
+    fillContainer &&
+    `
     & .simplebar-content {
       display: flex;
       flex: 1 1 auto;
