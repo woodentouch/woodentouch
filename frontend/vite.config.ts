@@ -5,7 +5,9 @@ import { vanillaExtractPlugin } from '@vanilla-extract/vite-plugin';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { visualizer } from 'rollup-plugin-visualizer';
 
-import createSvgIconsPlugin from 'vite-plugin-svg-icons'; // ⬅️ import direct
+// ⚠️ Importer le module CJS correctement :
+const createSvgIconsPluginCJS = require('vite-plugin-svg-icons');
+const createSvgIconsPlugin = createSvgIconsPluginCJS.default || createSvgIconsPluginCJS;
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
