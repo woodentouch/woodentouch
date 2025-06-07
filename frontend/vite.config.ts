@@ -10,9 +10,14 @@ export default defineConfig(async ({ mode }) => {
   const base = env.VITE_APP_BASE_PATH || '/';
   const isProduction = mode === 'production';
 
-  // 👇 Import dynamique de vite-plugin-svg-icons
+  // 👇 Import dynamique compatible CommonJS
   const svgIconsModule = await import('vite-plugin-svg-icons');
-  const createSvgIconsPlugin = svgIconsModule.default || svgIconsModule.createSvgIconsPlugin;
+  // Récupérer la fonction via default ou via .createSvgIconsPlugin
+  const createSvgIconsPlugin = svgIconsModule?.default?.createSvgIconsPlugin || svgIconsModule?.createSvgIconsPlugin || svgIconsModule?.default;
+
+  if (typeof createSvgIconsPlugin !== 'function') {
+    throw new Error('vite-plugin-svg-icons is not properly exported. Check your vite.config.ts and dependencies.');
+  }
 
   return {
     base,
