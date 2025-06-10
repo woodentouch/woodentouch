@@ -1,17 +1,43 @@
-## Hi there 👋
+# Woodentouch Deployment Guide
 
-<!--
-**woodentouch/woodentouch** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+This repository contains a Spring Boot backend and a React frontend. The project can be deployed locally or on [Railway](https://railway.app/).
 
-Here are some ideas to get you started:
+## Local Development
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
-yes
+1. **Backend**
+   ```bash
+   cd backend
+   mvn spring-boot:run
+   ```
+   The backend listens on port `8080` by default and expects a MySQL database named `wooden` running locally.
+
+2. **Frontend**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+
+## Deploying on Railway
+
+### 1. Create the Services
+
+Create two Railway services using the provided Dockerfiles:
+
+- **Backend** – use `backend/Dockerfile`.
+- **Frontend** – use `frontend/Dockerfile`.
+
+### 2. Database
+
+Add a **MySQL plugin** to the backend service. Railway will automatically provide the following environment variables:
+`MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD` and `MYSQLDATABASE`.
+
+The backend configuration reads these variables. No manual changes are required other than attaching the plugin.
+
+### 3. Environment Variables
+
+Backend also uses the `PORT` variable set by Railway. Frontend requires `VITE_APP_BASE_API` at build time to point to the backend URL. Set this variable in the frontend service settings before deploying.
+
+### 4. Deploy
+
+Trigger a deployment for each service. Railway will build the Docker images and start your application. Once the backend is running you can seed the database with your own data.
