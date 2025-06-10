@@ -29,17 +29,22 @@ axiosInstance.interceptors.request.use(
 
 // 响应拦截
 axiosInstance.interceptors.response.use(
-	(res: AxiosResponse<Result>) => {
+	(res: AxiosResponse<any>) => {
+		// Si c'est une API de stats → retourne la donnée brute directement
+		if (res.config.url?.includes("/stats/")) {
+			return res.data;
+		}
+
+		// Sinon, logique standard Result
 		if (!res.data) throw new Error(t("sys.api.apiRequestFailed"));
 
 		const { status, data, message } = res.data;
-		// 业务请求成功
 		const hasSuccess = data && Reflect.has(res.data, "status") && status === ResultEnum.SUCCESS;
+
 		if (hasSuccess) {
 			return data;
 		}
 
-		// 业务请求错误
 		throw new Error(message || t("sys.api.apiRequestFailed"));
 	},
 	(error: AxiosError<Result>) => {
@@ -78,8 +83,8 @@ class APIClient {
 	request<T = any>(config: AxiosRequestConfig): Promise<T> {
 		return new Promise((resolve, reject) => {
 			axiosInstance
-				.request<any, AxiosResponse<Result>>(config)
-				.then((res: AxiosResponse<Result>) => {
+				.request<any, AxiosResponse<any>>(config)
+				.then((res: AxiosResponse<any>) => {
 					resolve(res as unknown as Promise<T>);
 				})
 				.catch((e: Error | AxiosError) => {
@@ -88,4 +93,5 @@ class APIClient {
 		});
 	}
 }
+
 export default new APIClient();
