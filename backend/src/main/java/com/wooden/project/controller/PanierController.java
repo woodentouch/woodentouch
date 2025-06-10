@@ -1,6 +1,7 @@
 package com.wooden.project.controller;
 
 import com.wooden.project.model.Panier;
+import com.wooden.project.model.PanierItem;
 import com.wooden.project.service.PanierService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,37 @@ public class PanierController {
 
     @PostMapping
     public Panier createPanier(@RequestBody Panier panier) {
-        return panierService.save(panier);
+        return panierService.createPanierWithItems(panier);
+    }
+
+    @PostMapping("/{id}/items")
+    public PanierItem addItem(@PathVariable Long id, @RequestBody PanierItem item) {
+        return panierService.addItem(id, item);
+    }
+
+    @PutMapping("/items/{itemId}")
+    public PanierItem updateItemQuantity(@PathVariable Long itemId, @RequestParam int quantity) {
+        return panierService.updateItemQuantity(itemId, quantity);
+    }
+
+    @DeleteMapping("/items/{itemId}")
+    public ResponseEntity<Void> deleteItem(@PathVariable Long itemId) {
+        panierService.removeItem(itemId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Panier> updatePanier(@PathVariable Long id, @RequestBody Panier panier) {
+        Optional<Panier> existing = panierService.findById(id);
+        if (existing.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        Panier toUpdate = existing.get();
+        toUpdate.setMode_paiement(panier.getMode_paiement());
+        toUpdate.setPrix_panier(panier.getPrix_panier());
+        toUpdate.setEvent(panier.getEvent());
+        toUpdate.setDate_ajout(panier.getDate_ajout());
+        return ResponseEntity.ok(panierService.createPanierWithItems(toUpdate));
     }
 
     @DeleteMapping("/{id}")
