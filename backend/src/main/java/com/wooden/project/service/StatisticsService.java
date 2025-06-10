@@ -26,18 +26,21 @@ public class StatisticsService {
     public double getWeeklySales() {
         LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
         Date weekStart = Date.from(oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return panierRepo.weeklySales(weekStart);
+        Double result = panierRepo.weeklySales(weekStart);
+        return result != null ? result : 0.0;
     }
     public int getNewClients() {
         return panierRepo.newClients();
     }
 
     public double getYearlySales() {
-        return panierRepo.yearlySales();
+        Double result = panierRepo.yearlySales();
+        return result != null ? result : 0.0;
     }
 
     public double getChiffreAffaire() {
-        return panierRepo.sumTotalRevenue();
+        Double result = panierRepo.sumTotalRevenue();
+        return result != null ? result : 0.0;
     }
 
     public List<Panier> getLast20Sales() {

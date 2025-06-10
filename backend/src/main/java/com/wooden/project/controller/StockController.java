@@ -18,15 +18,15 @@ public class StockController {
         return stockService.findAll();
     }
     @GetMapping("/{id}")
-    public Stock getStockById(Long id) {
+    public Stock getStockById(@PathVariable Long id) {
         return stockService.findById(id).orElse(null);
     }
     @PostMapping
-    public Stock createStock(Stock stock) {
+    public Stock createStock(@RequestBody Stock stock) {
         return stockService.save(stock);
     }
     @DeleteMapping("/{id}")
-    public void deleteStock(Long id) {
+    public void deleteStock(@PathVariable Long id) {
         stockService.deleteById(id);
     }
 }
