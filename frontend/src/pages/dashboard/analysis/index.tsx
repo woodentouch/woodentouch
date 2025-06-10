@@ -9,6 +9,8 @@ import ChartPie from "@/pages/components/chart/view/chart-pie";
 import ChartRadar from "@/pages/components/chart/view/chart-radar";
 import { themeVars } from "@/theme/theme.css";
 import { Card, Col, Row, Typography } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import statsService from "@/api/services/statsService";
 import AnalysisCard from "./analysis-card";
 import AnalysisNews from "./analysis-news";
 import AnalysisOrderTimeline from "./analysis-order-timeline";
@@ -18,14 +20,37 @@ import CurrentDownload from "@/pages/dashboard/workbench/current-download";
 import NewInvoice from "../workbench/new-invoice";
 
 function Analysis() {
+	const { data: chiffreAffaire } = useQuery({
+		queryKey: ["chiffreAffaire"],
+		queryFn: statsService.getChiffreAffaire,
+	});
+	const { data: newClients } = useQuery({
+		queryKey: ["newClients"],
+		queryFn: statsService.getNewClients,
+	});
+	const { data: yearlySales } = useQuery({
+		queryKey: ["yearlySales"],
+		queryFn: statsService.getYearlySales,
+	});
+	const { data: weeklySales } = useQuery({
+		queryKey: ["weeklySales"],
+		queryFn: statsService.getWeeklySales,
+	});
+
 	return (
 		<div className="p-2">
-			<Typography.Title level={2}>Hi, Welcome back woody woodies🪵</Typography.Title>
+			<Typography.Title level={2}>
+				Hi, Welcome back woody woodies🪵
+			</Typography.Title>
 			<Row gutter={[16, 16]} justify="center">
 				<Col lg={6} md={12} span={24}>
 					<AnalysisCard
 						cover={glass_bag}
-						title="48K"
+						title={
+							chiffreAffaire !== undefined
+								? `${chiffreAffaire.toLocaleString("fr-FR")} €`
+								: "--"
+						}
 						subtitle="Chiffre d'affaire"
 						style={{
 							color: themeVars.colors.palette.success.dark,
@@ -36,7 +61,11 @@ function Analysis() {
 				<Col lg={6} md={12} span={24}>
 					<AnalysisCard
 						cover={glass_users}
-						title="1200"
+						title={
+							newClients !== undefined
+								? newClients.toLocaleString("fr-FR")
+								: "--"
+						}
 						subtitle="clients cette année"
 						style={{
 							color: themeVars.colors.palette.info.dark,
@@ -47,7 +76,11 @@ function Analysis() {
 				<Col lg={6} md={12} span={24}>
 					<AnalysisCard
 						cover={glass_buy}
-						title="13 340€"
+						title={
+							yearlySales !== undefined
+								? `${yearlySales.toLocaleString("fr-FR")} €`
+								: "--"
+						}
 						subtitle="Stock Actuel"
 						style={{
 							color: themeVars.colors.palette.warning.dark,
@@ -58,7 +91,11 @@ function Analysis() {
 				<Col lg={6} md={12} span={24}>
 					<AnalysisCard
 						cover={glass_message}
-						title="234"
+						title={
+							weeklySales !== undefined
+								? `${weeklySales.toLocaleString("fr-FR")} €`
+								: "--"
+						}
 						subtitle="Ventes ce mois"
 						style={{
 							color: themeVars.colors.palette.error.dark,
@@ -67,11 +104,11 @@ function Analysis() {
 					/>
 				</Col>
 			</Row>
-			
+
 			<Row gutter={[16, 16]} className="mt-8" justify="center">
 				<Col span={24} lg={12} xl={16}>
 					{/* <Card title=""> */}
-						<NewInvoice />
+					<NewInvoice />
 					{/* </Card> */}
 				</Col>
 				{/* <Col span={24} lg={12} xl={8}>
@@ -96,9 +133,9 @@ function Analysis() {
 
 			<Row gutter={[16, 16]} className="mt-8" justify="center">
 				<Col span={24} lg={12} xl={16}>
-					 <Card title="Best Sellers 2025"> 
+					<Card title="Best Sellers 2025">
 						<ChartBar />
-					 </Card> 
+					</Card>
 				</Col>
 				<Col span={24} lg={12} xl={8}>
 					<Card title="Plateforme de ventes">
@@ -127,7 +164,6 @@ function Analysis() {
 					</Card>
 				</Col>
 			</Row> */}
-
 		</div>
 	);
 }
