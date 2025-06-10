@@ -18,16 +18,14 @@ public class Produit {
     private Long id_produit;
     @ManyToOne
     @JoinColumn(name = "license_id", referencedColumnName = "id_license")
-    private licence licence_id;
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id_user")
-    private User user_id;
+    private licence licence;
     @Enumerated(EnumType.STRING)
-    private Taille taille;    private String modele;
+    private Taille taille;
 
-    public Produit(licence licence_id, User user_id, Taille taille, String modele) {
-        this.licence_id = licence_id;
-        this.user_id = user_id;
+    private String modele;
+
+    public Produit(licence licence, Taille taille, String modele) {
+        this.licence = licence;
         this.taille = taille;
         this.modele = modele;
     }

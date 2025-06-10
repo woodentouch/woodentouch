@@ -18,14 +18,29 @@ public class Panier {
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private Long id_panier;
-    @ManyToOne
-    @JoinColumn(name="id_produit" , referencedColumnName = "id_produit")
-    private Produit produit;
     @Temporal(TemporalType.DATE)
-    private Date date_ajout;
+    @Column(name = "date_ajout")
+    private Date dateAjout;
 
-    public Panier(Produit produit, Date date_ajout) {
-        this.produit = produit;
-        this.date_ajout = date_ajout;
+    @Column(name = "mode_paiement")
+    private String modePaiement;
+
+    @Column(name = "prix_panier")
+    private Double prixPanier;
+
+    @ManyToOne
+    @JoinColumn(name = "event_id")
+    private evenement event;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    public Panier(Date dateAjout, String modePaiement, Double prixPanier, evenement event, User user) {
+        this.dateAjout = dateAjout;
+        this.modePaiement = modePaiement;
+        this.prixPanier = prixPanier;
+        this.event = event;
+        this.user = user;
     }
 }
