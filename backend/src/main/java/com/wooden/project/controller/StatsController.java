@@ -27,10 +27,7 @@ public class StatsController {
 
 
     @GetMapping("/getYearlySales")
-    public Double getYearlySales() {
-        if (statisticsService.getYearlySales() == 0) {
-            return 0.0;
-        }
+    public double getYearlySales() {
         return statisticsService.getYearlySales();
     }
 
