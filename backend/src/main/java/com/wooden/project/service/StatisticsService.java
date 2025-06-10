@@ -1,8 +1,8 @@
 package com.wooden.project.service;
 
-import com.wooden.project.model.Ventes;
+import com.wooden.project.model.Panier;
 import com.wooden.project.repository.UserRepo;
-import com.wooden.project.repository.VenteRepo;
+import com.wooden.project.repository.PanierRepo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,11 +14,11 @@ import java.util.List;
 @Service
 public class StatisticsService {
 
-    private final VenteRepo VenteRepo;
+    private final PanierRepo panierRepo;
     private final UserRepo UserRepo;
 
-    public StatisticsService(VenteRepo VenteRepo, UserRepo UserRepo) {
-        this.VenteRepo = VenteRepo;
+    public StatisticsService(PanierRepo panierRepo, UserRepo UserRepo) {
+        this.panierRepo = panierRepo;
         this.UserRepo = UserRepo;
     }
 
@@ -26,21 +26,21 @@ public class StatisticsService {
     public double getWeeklySales() {
         LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
         Date weekStart = Date.from(oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return VenteRepo.WeeklySales(weekStart);
+        return panierRepo.weeklySales(weekStart);
     }
     public int getNewClients() {
-        return VenteRepo.NewClients();
+        return panierRepo.newClients();
     }
 
     public double getYearlySales() {
-        return VenteRepo.YearlySales();
+        return panierRepo.yearlySales();
     }
 
     public double getChiffreAffaire() {
-        return VenteRepo.sumTotalRevenue();
+        return panierRepo.sumTotalRevenue();
     }
 
-    public List<Ventes> getLast20Sales() {
-        return VenteRepo.findTop20ByOrderByDateDesc();
+    public List<Panier> getLast20Sales() {
+        return panierRepo.findTop20ByOrderByDate_ajoutDesc();
     }
 }
