@@ -16,24 +16,24 @@ interface DataType {
 export default function NewInvoice() {
 	const columns: ColumnsType<DataType> = [
 		{
-			title: "InvoiceId",
+			title: "Vente",
 			dataIndex: "id",
 			key: "id",
 			render: (text) => <span>{text}</span>,
 		},
+		// {
+		// 	title: "Manga",
+		// 	dataIndex: "category",
+		// 	key: "category",
+		// },
 		{
-			title: "Category",
-			dataIndex: "category",
-			key: "category",
-		},
-		{
-			title: "Price",
+			title: "Prix",
 			dataIndex: "price",
 			key: "price",
 			render: (text) => <span>{text}</span>,
 		},
 		{
-			title: "Status",
+			title: "canal de vente",
 			key: "status",
 			dataIndex: "status",
 			render: (_status) => {
@@ -60,24 +60,24 @@ export default function NewInvoice() {
 	const data: DataType[] = [
 		{
 			key: "1",
-			id: "INV-1990",
+		id: "Guts(M), Casca Guts(M)",
 			category: "Android",
-			price: "$83.74",
-			status: "Paid",
+			price: "180€",
+			status: "Made in Asia",
 		},
 		{
 			key: "2",
-			id: "INV-1991",
+			id: "Goku(S)",
 			category: "Mac",
-			price: "$97.14",
-			status: "Out of Date",
+			price: "35€",
+			status: "Site internet",
 		},
 		{
 			key: "3",
-			id: "INV-1992",
+			id: "Gear V(S) ",
 			category: "Windows",
-			price: "$68.71",
-			status: "Progress",
+			price: "35€",
+			status: "Etsy",
 		},
 		{
 			key: "4",
@@ -87,18 +87,46 @@ export default function NewInvoice() {
 			status: "Paid",
 		},
 		{
-			key: "5",
-			id: "INV-1994",
-			category: "Mac",
-			price: "$53.17",
+			key: "4",
+			id: "INV-1993",
+			category: "Android",
+			price: "$85.21",
 			status: "Paid",
 		},
+		{
+			key: "4",
+			id: "INV-1993",
+			category: "Android",
+			price: "$85.21",
+			status: "Paid",
+		},
+		{
+			key: "4",
+			id: "INV-1993",
+			category: "Android",
+			price: "$85.21",
+			status: "Paid",
+		},
+		{
+			key: "4",
+			id: "INV-1993",
+			category: "Android",
+			price: "$85.21",
+			status: "Paid",
+		},{
+			key: "4",
+			id: "INV-1993",
+			category: "Android",
+			price: "$85.21",
+			status: "Paid",
+		},
+		
 	];
 
 	return (
 		<Card className="flex-col">
 			<header className="self-start">
-				<Typography.Title level={5}>New Invoice</Typography.Title>
+				<Typography.Title level={5}>Dernieres ventes</Typography.Title>
 			</header>
 			<main className="w-full">
 				<Scrollbar>
