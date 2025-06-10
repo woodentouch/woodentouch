@@ -60,7 +60,7 @@ export default function NewInvoice() {
 	const data: DataType[] = [
 		{
 			key: "1",
-		id: "Guts(M), Casca Guts(M)",
+			id: "Guts(M), Casca Guts(M)",
 			category: "Android",
 			price: "180€",
 			status: "Made in Asia",
@@ -87,40 +87,40 @@ export default function NewInvoice() {
 			status: "Paid",
 		},
 		{
-			key: "4",
+			key: "5",
 			id: "INV-1993",
 			category: "Android",
 			price: "$85.21",
 			status: "Paid",
 		},
 		{
-			key: "4",
+			key: "6",
 			id: "INV-1993",
 			category: "Android",
 			price: "$85.21",
 			status: "Paid",
 		},
 		{
-			key: "4",
+			key: "7",
 			id: "INV-1993",
 			category: "Android",
 			price: "$85.21",
 			status: "Paid",
 		},
 		{
-			key: "4",
-			id: "INV-1993",
-			category: "Android",
-			price: "$85.21",
-			status: "Paid",
-		},{
-			key: "4",
+			key: "8",
 			id: "INV-1993",
 			category: "Android",
 			price: "$85.21",
 			status: "Paid",
 		},
-		
+		{
+			key: "9",
+			id: "INV-1993",
+			category: "Android",
+			price: "$85.21",
+			status: "Paid",
+		},
 	];
 
 	return (
