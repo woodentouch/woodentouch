@@ -23,19 +23,14 @@ public class Produit {
     @JsonManagedReference
     private licence licence_id;
 
-    @OneToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "id_user")
-    @JsonManagedReference
-    private User user_id;
 
     @Enumerated(EnumType.STRING)
     private Taille taille;    
     
     private String modele;
 
-    public Produit(licence licence_id, User user_id, Taille taille, String modele) {
+    public Produit(licence licence_id, Taille taille, String modele) {
         this.licence_id = licence_id;
-        this.user_id = user_id;
         this.taille = taille;
         this.modele = modele;
     }

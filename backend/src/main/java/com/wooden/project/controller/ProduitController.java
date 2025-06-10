@@ -2,8 +2,6 @@ package com.wooden.project.controller;
 
 import com.wooden.project.model.Produit;
 import com.wooden.project.model.licence;
-import com.wooden.project.model.User;
-import com.wooden.project.repository.UserRepo;
 import com.wooden.project.repository.licenceRepo;
 import com.wooden.project.repository.produitRepo;
 import com.wooden.project.service.ProductService;
@@ -21,14 +19,12 @@ public class ProduitController {
     private final ProductService productService;
     private final produitRepo productRepository;
     private final licenceRepo licenceRepository;
-    private final UserRepo userRepository;
 
     public ProduitController(ProductService productService, produitRepo productRepository,
-                            licenceRepo licenceRepository, UserRepo userRepository) {
+                            licenceRepo licenceRepository) {
         this.productService = productService;
         this.productRepository = productRepository;
         this.licenceRepository = licenceRepository;
-        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -44,20 +40,11 @@ public class ProduitController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Produit> createProduit(@RequestBody Produit produit) {
-        // Valider les IDs de licence et user si fournis
+        // Valider l'ID de licence si fourni
         if (produit.getLicence_id() != null && produit.getLicence_id().getId_license() != null) {
             Optional<licence> licence = licenceRepository.findById(produit.getLicence_id().getId_license());
             if (licence.isPresent()) {
                 produit.setLicence_id(licence.get());
-            } else {
-                return ResponseEntity.badRequest().body(null);
-            }
-        }
-
-        if (produit.getUser_id() != null && produit.getUser_id().getId_user() != null) {
-            Optional<User> user = userRepository.findById(produit.getUser_id().getId_user());
-            if (user.isPresent()) {
-                produit.setUser_id(user.get());
             } else {
                 return ResponseEntity.badRequest().body(null);
             }
@@ -89,16 +76,6 @@ public class ProduitController {
             Optional<licence> licence = licenceRepository.findById(produit.getLicence_id().getId_license());
             if (licence.isPresent()) {
                 existing.setLicence_id(licence.get());
-            } else {
-                return ResponseEntity.badRequest().body(null);
-            }
-        }
-
-        // Mettre à jour l'utilisateur si fourni
-        if (produit.getUser_id() != null && produit.getUser_id().getId_user() != null) {
-            Optional<User> user = userRepository.findById(produit.getUser_id().getId_user());
-            if (user.isPresent()) {
-                existing.setUser_id(user.get());
             } else {
                 return ResponseEntity.badRequest().body(null);
             }
