@@ -5,13 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Repository
 public interface VenteRepo extends JpaRepository<Ventes, Long> {
     @Query("SELECT SUM(v.prix) FROM Ventes v WHERE v.date >= :oneWeekAgo")
-    public Double WeeklySales(LocalDate oneWeekAgo);
+    Double WeeklySales(Date oneWeekAgo);
 
     @Query("SELECT SUM(v.prix) FROM Ventes v WHERE YEAR(v.date) = YEAR(current_date)")
     public Double YearlySales();

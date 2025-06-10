@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.Year;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -23,7 +25,8 @@ public class StatisticsService {
 
     public double getWeeklySales() {
         LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
-        return VenteRepo.WeeklySales(oneWeekAgo);
+        Date weekStart = Date.from(oneWeekAgo.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return VenteRepo.WeeklySales(weekStart);
     }
     public int getNewClients() {
         return VenteRepo.NewClients();
