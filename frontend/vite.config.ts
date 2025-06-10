@@ -38,19 +38,18 @@ export default defineConfig(async ({ mode }) => {
           template: 'treemap',
         }),
     ].filter(Boolean),
-    server: {
-      open: true,
-      host: true,
-      port: 3001,
-      proxy: {
-        '/api': {
-          target: 'http://localhost:3000',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, ''),
-          secure: false,
+      server: {
+        open: true,
+        host: true,
+        port: 3001,
+        proxy: {
+          '/api': {
+            target: 'http://localhost:8080',
+            changeOrigin: true,
+            secure: false,
+          },
         },
       },
-    },
     build: {
       target: 'esnext',
       minify: 'esbuild',
