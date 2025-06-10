@@ -28,10 +28,11 @@ public class StatsController {
 
     @GetMapping("/getYearlySales")
     public Double getYearlySales() {
-        if (statisticsService.getYearlySales() == 0) {
+        double yearlySales = statisticsService.getYearlySales();
+        if (yearlySales == 0) {
             return 0.0;
         }
-        return statisticsService.getYearlySales();
+        return yearlySales;
     }
 
 

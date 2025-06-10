@@ -6,7 +6,6 @@ import com.wooden.project.repository.VenteRepo;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.Year;
 import java.util.List;
 
 @Service
@@ -23,18 +22,21 @@ public class StatisticsService {
 
     public double getWeeklySales() {
         LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
-        return VenteRepo.WeeklySales(oneWeekAgo);
+        Double weeklySales = VenteRepo.WeeklySales(oneWeekAgo);
+        return weeklySales != null ? weeklySales : 0.0;
     }
     public int getNewClients() {
         return VenteRepo.NewClients();
     }
 
     public double getYearlySales() {
-        return VenteRepo.YearlySales();
+        Double yearlySales = VenteRepo.YearlySales();
+        return yearlySales != null ? yearlySales : 0.0;
     }
 
     public double getChiffreAffaire() {
-        return VenteRepo.sumTotalRevenue();
+        Double revenue = VenteRepo.sumTotalRevenue();
+        return revenue != null ? revenue : 0.0;
     }
 
     public List<Ventes> getLast20Sales() {
