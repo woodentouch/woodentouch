@@ -28,14 +28,73 @@ function Analysis() {
 		queryKey: ["newClients"],
 		queryFn: statsService.getNewClients,
 	});
-	const { data: yearlySales } = useQuery({
-		queryKey: ["yearlySales"],
-		queryFn: statsService.getYearlySales,
+	const { data: totalStockValue } = useQuery({
+		queryKey: ["totalStockValue"],
+		queryFn: statsService.getTotalStockValue,
 	});
-	const { data: weeklySales } = useQuery({
-		queryKey: ["weeklySales"],
-		queryFn: statsService.getWeeklySales,
+	const { data: monthlySales } = useQuery({
+		queryKey: ["monthlySales"],
+		queryFn: statsService.getMonthlySales,
 	});
+	const { data: bestSellers } = useQuery({
+		queryKey: ["bestSellersLastEvent"],
+		queryFn: statsService.getBestSellersLastEvent,
+	});
+	const { data: licenseStats } = useQuery({
+		queryKey: ["licenseSalesStats"],
+		queryFn: statsService.getLicenseSalesStats,
+	});
+
+	// Exclude 'support' entries and sort descending
+	const filteredBestSellers = bestSellers
+		?.filter(
+			(s) =>
+				!s.productName.toLowerCase().includes("support") &&
+				!s.licenseName.toLowerCase().includes("support")
+		)
+		.sort((a, b) => b.total - a.total) || [];
+	// Transform best sellers for bar chart by total revenue
+	const bestSellersData = filteredBestSellers.map((s) => s.total);
+	const bestSellersCategories = filteredBestSellers.map(
+		(s) => `${s.productName} (${s.licenseName})`
+	);
+
+	// Group license stats into top 4 and 'Other'
+	const sortedLicenseStats =
+		licenseStats
+			?.filter((s) => !s.licenseName.toLowerCase().includes("support"))
+			.sort((a, b) => b.percentage - a.percentage) || [];
+	const totalCount = sortedLicenseStats.reduce((sum, s) => sum + s.count, 0);
+	const top4 = sortedLicenseStats.slice(0, 4);
+	const otherCount = sortedLicenseStats
+		.slice(4)
+		.reduce((sum, s) => sum + s.count, 0);
+	const pieData = [...top4];
+	if (otherCount > 0) {
+		pieData.push({
+			licenseName: "Other",
+			count: otherCount,
+			percentage: (otherCount * 100) / totalCount,
+		});
+	}
+	const licenseStatsData = pieData.map((s) => s.count);
+	const licenseStatsLabels = pieData.map((s) => s.licenseName);
+
+	// Define high-contrast colors
+	const barColors = filteredBestSellers.map((_, i) =>
+		i % 2 === 0
+			? themeVars.colors.palette.success.default
+			: themeVars.colors.palette.error.default
+	);
+	// Replace pieColors with a fixed high-contrast palette for pieData
+	const allPieColors = [
+		themeVars.colors.palette.info.default,
+		themeVars.colors.palette.success.default,
+		themeVars.colors.palette.warning.default,
+		themeVars.colors.palette.error.default,
+		themeVars.colors.palette.secondary.default,
+	];
+	const pieColors = allPieColors.slice(0, pieData.length);
 
 	return (
 		<div className="p-2">
@@ -77,8 +136,8 @@ function Analysis() {
 					<AnalysisCard
 						cover={glass_buy}
 						title={
-							yearlySales !== undefined
-								? `${yearlySales.toLocaleString("fr-FR")} €`
+							totalStockValue !== undefined
+								? `${totalStockValue.toLocaleString("fr-FR")} €`
 								: "--"
 						}
 						subtitle="Stock Actuel"
@@ -92,8 +151,8 @@ function Analysis() {
 					<AnalysisCard
 						cover={glass_message}
 						title={
-							weeklySales !== undefined
-								? `${weeklySales.toLocaleString("fr-FR")} €`
+							monthlySales !== undefined
+								? `${monthlySales.toLocaleString("fr-FR")} €`
 								: "--"
 						}
 						subtitle="Ventes ce mois"
@@ -120,26 +179,32 @@ function Analysis() {
 
 			<Row gutter={[16, 16]} className="mt-8" justify="center">
 				<Col span={24} lg={12} xl={16}>
-					<Card title="Best-sellers de la derniére convention">
-						<ChartBar />
-					</Card>
-				</Col>
-				<Col span={24} lg={12} xl={8}>
-					<Card title="Manga 2025">
-						<ChartPie />
-					</Card>
-				</Col>
-			</Row>
-
-			<Row gutter={[16, 16]} className="mt-8" justify="center">
-				<Col span={24} lg={12} xl={16}>
-					<Card title="Best Sellers 2025">
-						<ChartBar />
+					<Card title="Best-sellers de la dernière convention">
+						{/* Display bestSellers data here */}
+						{bestSellersData.length > 0 &&
+							bestSellersCategories.length > 0 ? (
+							<ChartBar
+								series={bestSellersData}
+								categories={bestSellersCategories}
+								colors={barColors} // Pass colors to ChartBar
+							/>
+						) : (
+							"No data available"
+						)}
 					</Card>
 				</Col>
 				<Col span={24} lg={12} xl={8}>
 					<Card title="Plateforme de ventes">
-						<ChartPie />
+						{/* Display licenseStats data here */}
+						{licenseStatsData.length > 0 && licenseStatsLabels.length > 0 ? (
+							<ChartPie
+								series={licenseStatsData}
+								labels={licenseStatsLabels}
+								colors={pieColors} // Pass colors to ChartPie
+							/>
+						) : (
+							"No data available"
+						)}
 					</Card>
 				</Col>
 			</Row>

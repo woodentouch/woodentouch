@@ -1,10 +1,15 @@
 import Chart from "@/components/chart/chart";
 import useChart from "@/components/chart/useChart";
 
-const series = [44, 55, 13, 43];
-export default function ChartPie() {
+interface ChartPieProps {
+	series: number[];
+	labels: string[];
+	colors?: string[]; // <-- Added colors prop
+}
+
+export default function ChartPie({ series, labels, colors }: ChartPieProps) {
 	const chartOptions = useChart({
-		labels: ["DBZ", "OnePiece", "Europe", "Africa"],
+		labels: labels,
 		legend: {
 			horizontalAlign: "center",
 		},
@@ -29,6 +34,7 @@ export default function ChartPie() {
 				},
 			},
 		},
+		colors: colors, // <-- Passed colors to chart options
 	});
 
 	return (
