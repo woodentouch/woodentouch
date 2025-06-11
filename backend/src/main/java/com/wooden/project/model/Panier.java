@@ -42,11 +42,12 @@ public class Panier {
     @JoinColumn(name = "event_id")
     private evenement event;
     @Temporal(TemporalType.DATE)
-    private Date date_ajout;
+    @Column(name = "dateAjout")
+    private Date dateAjout;
 
-    public Panier(User user, Date date_ajout, String mode_paiement, Double prix_panier, evenement event) {
+    public Panier(User user, Date dateAjout, String mode_paiement, Double prix_panier, evenement event) {
         this.user = user;
-        this.date_ajout = date_ajout;
+        this.dateAjout = dateAjout;
         this.mode_paiement = mode_paiement;
         this.prix_panier = prix_panier;
         this.event = event;

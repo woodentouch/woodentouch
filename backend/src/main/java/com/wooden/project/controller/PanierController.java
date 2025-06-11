@@ -60,7 +60,7 @@ public class PanierController {
         toUpdate.setMode_paiement(panier.getMode_paiement());
         toUpdate.setPrix_panier(panier.getPrix_panier());
         toUpdate.setEvent(panier.getEvent());
-        toUpdate.setDate_ajout(panier.getDate_ajout());
+        toUpdate.setDateAjout(panier.getDateAjout());
         return ResponseEntity.ok(panierService.createPanierWithItems(toUpdate));
     }
 

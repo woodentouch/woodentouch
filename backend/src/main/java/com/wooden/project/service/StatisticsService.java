@@ -44,6 +44,6 @@ public class StatisticsService {
     }
 
     public List<Panier> getLast20Sales() {
-        return panierRepo.findTop20ByOrderByDate_ajoutDesc();
+        return panierRepo.findTop20ByOrderByDateAjoutDesc();
     }
 }
