@@ -1,6 +1,7 @@
 package com.wooden.project.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ public class PanierItem {
 
     @ManyToOne
     @JoinColumn(name = "id_panier", referencedColumnName = "id_panier")
+    @JsonBackReference
     private Panier panier;
 
     @ManyToOne
