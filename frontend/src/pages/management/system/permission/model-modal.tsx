@@ -56,38 +56,40 @@ export default function ModelModal({
 				<Form.Item name="name" label="Nom" rules={[{ required: true }]}>
 					<Input />
 				</Form.Item>
-                                <Form.Item
-                                        name="quantity"
-                                        label="Quantité"
-                                        rules={[{ required: true }]}
-                                >
-                                        <div className="flex items-center gap-2">
-                                                <Button
-                                                        size="small"
-                                                        onClick={() => {
-                                                                const v = form.getFieldValue("quantity") || 0;
-                                                                form.setFieldsValue({ quantity: Math.max(0, v - 1) });
-                                                        }}
-                                                >
-                                                        -
-                                                </Button>
-                                                <InputNumber style={{ flex: 1 }} min={0} />
-                                                <Button
-                                                        size="small"
-                                                        onClick={() => {
-                                                                const v = form.getFieldValue("quantity") || 0;
-                                                                form.setFieldsValue({ quantity: v + 1 });
-                                                        }}
-                                                >
-                                                        +
-                                                </Button>
-                                        </div>
-                                        {formValue.quantity !== undefined && (
-                                                <div className="text-xs text-gray-500 mt-1">
-                                                        Stock précédent : {formValue.quantity}
-                                                </div>
-                                        )}
-                                </Form.Item>
+                               <Form.Item label="Quantité">
+                                       <div className="flex items-center gap-2">
+                                               <Button
+                                                       size="small"
+                                                       onClick={() => {
+                                                               const v = form.getFieldValue("quantity") || 0;
+                                                               form.setFieldsValue({ quantity: Math.max(0, v - 1) });
+                                                       }}
+                                               >
+                                                       -
+                                               </Button>
+                                               <Form.Item
+                                                       name="quantity"
+                                                       noStyle
+                                                       rules={[{ required: true }]}
+                                               >
+                                                       <InputNumber style={{ flex: 1 }} min={0} />
+                                               </Form.Item>
+                                               <Button
+                                                       size="small"
+                                                       onClick={() => {
+                                                               const v = form.getFieldValue("quantity") || 0;
+                                                               form.setFieldsValue({ quantity: v + 1 });
+                                                       }}
+                                               >
+                                                       +
+                                               </Button>
+                                       </div>
+                                       {formValue.quantity !== undefined && (
+                                               <div className="text-xs text-gray-500 mt-1">
+                                                       Stock précédent : {formValue.quantity}
+                                               </div>
+                                       )}
+                               </Form.Item>
 				<Form.Item
 					name="minStock"
 					label="Stock minimum"
