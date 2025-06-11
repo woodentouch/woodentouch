@@ -31,8 +31,12 @@ public interface PanierRepo extends JpaRepository<Panier, Long> {
 
     List<Panier> findTop20ByOrderByDateAjoutDesc();
 
-    @Query("SELECT e FROM evenement e ORDER BY e.dateDebut DESC")
-    List<evenement> findLatestEvent();
+    // Returns the most recent event that actually has at least one sale
+    // We order by start date and id to ensure deterministic result
+    @Query("SELECT e FROM evenement e "
+            + "WHERE EXISTS (SELECT 1 FROM Panier p WHERE p.event = e) "
+            + "ORDER BY e.dateDebut DESC, e.eventId DESC")
+    List<evenement> findLatestEventWithSales();
 
     @Query("SELECT new map(pi.produit.modele as productName, pi.produit.licence_id.name_license as licenseName, SUM(pi.quantite) as quantitySold, SUM(pi.quantite * pi.prix_unitaire) as total) " +
            "FROM PanierItem pi WHERE pi.panier.event = :event " +
