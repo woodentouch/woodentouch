@@ -31,10 +31,14 @@ export default function CaissePage() {
                 queryFn: productService.getProducts,
         });
 
+        const productList = Array.isArray(products) ? products : [];
+
         const { data: lastSales } = useQuery<any[]>({
                 queryKey: ["lastSales"],
                 queryFn: () => statsService.getLast20Sales() as Promise<any[]>,
         });
+
+        const salesList = Array.isArray(lastSales) ? lastSales : [];
 
         const items = useCartItems();
         const { addItem, clear, updateQuantity } = useCartActions();
@@ -145,9 +149,11 @@ export default function CaissePage() {
                         <Modal open={modalOpen} onCancel={() => setModalOpen(false)} footer={null} title="Articles">
                                 <Space direction="vertical" className="w-full">
                                         <Input placeholder="Rechercher" value={search} onChange={(e) => setSearch(e.target.value)} />
-                                        {products
-                                                ?.filter((p) =>
-                                                        p.modele.toLowerCase().includes(search.toLowerCase()),
+                                        {productList
+                                                .filter((p) =>
+                                                        p.modele
+                                                                .toLowerCase()
+                                                                .includes(search.toLowerCase()),
                                                 )
                                                 .map((p) => (
                                                 <Card key={p.id_produit} className="w-full">
@@ -176,14 +182,14 @@ export default function CaissePage() {
                                         <InputNumber className="w-full" min={0} value={discountValue} onChange={(v) => setDiscountValue(Number(v))} />
                                 </Space>
                         </Modal>
-                        {lastSales && (
+                        {salesList.length > 0 && (
                                 <Card>
                                         <Typography.Title level={5}>Dernières ventes</Typography.Title>
                                         <Table
                                                 size="small"
                                                 pagination={false}
                                                 rowKey="id_panier"
-                                                dataSource={(lastSales as any[]).slice(0, 10)}
+                                                dataSource={salesList.slice(0, 10)}
                                                 columns={[
                                                         { title: "Date", dataIndex: "dateAjout" },
                                                         {
