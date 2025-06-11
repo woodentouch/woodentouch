@@ -73,6 +73,6 @@ public class PanierServiceImpl extends BaseServiceImpl<Panier,Long> implements P
 
     @Override
     public java.util.List<PanierItem> getItems(Long panierId) {
-        return panierItemRepository.findByPanier_Id_panier(panierId);
+        return panierItemRepository.findByPanierId(panierId);
     }
 }
