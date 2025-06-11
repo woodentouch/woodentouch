@@ -1,8 +1,14 @@
-import axios from "axios";
+import apiClient from "../apiClient";
 
-const API_URL = "";  // mettre l'URL
+export enum ProductApi {
+	Products = "/produits",
+}
 
-export const fetchProducts = async () => {
-  const response = await axios.get(API_URL);
-  return response.data;
-};
+export interface Product {
+	id_produit: number;
+	modele: string;
+}
+
+const getProducts = () => apiClient.get<Product[]>({ url: ProductApi.Products });
+
+export default { getProducts };
