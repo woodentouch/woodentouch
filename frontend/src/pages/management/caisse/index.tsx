@@ -45,7 +45,7 @@ export default function CaissePage() {
         const salesList = Array.isArray(lastSales) ? lastSales : [];
 
         const items = useCartItems();
-        const { addItem, clear, updateQuantity } = useCartActions();
+        const { addItem, clear, updateQuantity, removeItem } = useCartActions();
         const [modalOpen, setModalOpen] = useState(false);
         const [search, setSearch] = useState("");
         const [amountModal, setAmountModal] = useState(false);
@@ -53,24 +53,33 @@ export default function CaissePage() {
         const [amountValue, setAmountValue] = useState(0);
         const [discountValue, setDiscountValue] = useState(1);
 
-	const columns: ColumnsType<CartItem> = [
-		{ title: "Article", dataIndex: "name" },
-		{
-			title: "Qté",
-			dataIndex: "quantity",
-			width: 80,
-			render: (q, _, index) => (
-				<InputNumber min={1} value={q} onChange={(v) => updateQuantity(index as number, Number(v))} />
-			),
-		},
-		{ title: "Prix", dataIndex: "unitPrice", width: 100, render: (p) => `${p}€` },
-		{
-			title: "Total",
-			dataIndex: "unitPrice",
-			width: 100,
-			render: (p, r) => `${r.quantity * r.unitPrice}€`,
-		},
-	];
+        const columns: ColumnsType<CartItem> = [
+                { title: "Article", dataIndex: "name" },
+                {
+                        title: "Qté",
+                        dataIndex: "quantity",
+                        width: 80,
+                        render: (q, _, index) => (
+                                <InputNumber min={1} value={q} onChange={(v) => updateQuantity(index as number, Number(v))} />
+                        ),
+                },
+                { title: "Prix", dataIndex: "unitPrice", width: 100, render: (p) => `${p}€` },
+                {
+                        title: "Total",
+                        dataIndex: "unitPrice",
+                        width: 100,
+                        render: (p, r) => `${r.quantity * r.unitPrice}€`,
+                },
+                {
+                        title: "",
+                        width: 50,
+                        render: (_, __, index) => (
+                                <IconButton onClick={() => removeItem(index)}>
+                                        <Iconify icon="ic:baseline-delete" />
+                                </IconButton>
+                        ),
+                },
+        ];
 
         const onAddItem = (product: Product, variant: string) => {
                 addItem({
@@ -122,20 +131,22 @@ export default function CaissePage() {
                                         <Table rowKey="name" pagination={false} columns={columns} dataSource={items} />
                                 )}
                         </Card>
-                       <Card className="flex flex-col gap-4">
-                               <Space wrap>
-                                       <Button type="primary" onClick={() => setModalOpen(true)}>+ Article</Button>
-                                       <Button onClick={() => setAmountModal(true)}>+ Montant</Button>
-                                       <Button onClick={() => setDiscountModal(true)}>Réduction</Button>
+                       <Card>
+                               <Space direction="vertical" size="middle" className="w-full">
+                                       <Space wrap>
+                                               <Button type="primary" onClick={() => setModalOpen(true)}>+ Article</Button>
+                                               <Button onClick={() => setAmountModal(true)}>+ Montant</Button>
+                                               <Button onClick={() => setDiscountModal(true)}>Réduction</Button>
+                                       </Space>
+                                       <Button
+                                               type="primary"
+                                               block
+                                               disabled={items.length === 0}
+                                               onClick={() => toast.success("Facturation en cours...")}
+                                       >
+                                               Facturer ({total}€)
+                                       </Button>
                                </Space>
-                               <Button
-                                       type="primary"
-                                       block
-                                       disabled={items.length === 0}
-                                       onClick={() => toast.success("Facturation en cours...")}
-                               >
-                                       Facturer ({total}€)
-                               </Button>
                        </Card>
                         <Modal open={modalOpen} onCancel={() => setModalOpen(false)} footer={null} title="Articles">
                                 <Space direction="vertical" className="w-full">
