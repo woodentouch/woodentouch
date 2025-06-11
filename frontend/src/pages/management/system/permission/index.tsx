@@ -79,18 +79,6 @@ export default function StockPage() {
 		/>
 	);
 
-	const addDuplicate = (licenseId: string, model: Model) => {
-		setLicenses((prev) =>
-			prev.map((l) =>
-				l.id === licenseId
-					? {
-							...l,
-							models: [...l.models, { ...model, id: Date.now().toString() }],
-						}
-					: l,
-			),
-		);
-	};
 
 	const deleteModel = (licenseId: string, modelId: string) => {
 		setLicenses((prev) =>
@@ -121,27 +109,18 @@ export default function StockPage() {
 		);
 	};
 
-	const modelColumns: ColumnsType<ModelRow> = [
-		{
-			title: "Name",
-			dataIndex: "name",
-			render: (text, record) => (
-				<span>
-					{text} <Tag className="ml-2">{record.quantity}</Tag>
-				</span>
-			),
-		},
-		{
-			title: "Licence",
-			dataIndex: "licenseId",
-			render: (id) => {
-				const l = licenses.find((lic) => lic.id === id);
-				return <Tag color="processing">{l?.name}</Tag>;
-			},
-		},
-		{
-			title: "Stock Minimum",
-			dataIndex: "minStock",
+        const modelColumns: ColumnsType<ModelRow> = [
+                {
+                        title: "Name",
+                        dataIndex: "name",
+                },
+                {
+                        title: "Quantité",
+                        dataIndex: "quantity",
+                },
+                {
+                        title: "Stock Minimum",
+                        dataIndex: "minStock",
 			render: (min, record) => (
 				<InputNumber
 					min={0}
@@ -168,15 +147,12 @@ export default function StockPage() {
 				return <Tag color={color}>{text}</Tag>;
 			},
 		},
-		{
-			title: "Action",
-			key: "action",
-			align: "center",
-			render: (_, record) => (
-				<div className="flex justify-end text-gray">
-					<IconButton onClick={() => addDuplicate(record.licenseId, record)}>
-						<Iconify icon="gridicons:add-outline" size={18} />
-					</IconButton>
+                {
+                        title: "Action",
+                        key: "action",
+                        align: "center",
+                        render: (_, record) => (
+                                <div className="flex justify-end text-gray">
 					<IconButton
 						onClick={() =>
 							setModelModalProps({
