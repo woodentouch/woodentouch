@@ -10,8 +10,6 @@ import type { AppRouteObject } from "#/router";
 const ProfilePage = lazy(() => import("@/pages/management/user/profile"));
 const AccountPage = lazy(() => import("@/pages/management/user/account"));
 
-const OrganizationPage = lazy(() => import("@/pages/management/system/organization"));
-
 const Blog = lazy(() => import("@/pages/management/blog"));
 const CaissePage = lazy(() => import("@/pages/management/caisse"));
 
@@ -60,25 +58,20 @@ const management: AppRouteObject = {
 				},
 			],
 		},
-		{
-			path: "system",
-			meta: { label: "Système", key: "/management/system" },
-			children: [
-				{
-					path: "organization",
-					element: <OrganizationPage />,
-					meta: {
-						label: "Organisation",
-						key: "/management/system/organization",
-					},
-				},
-			],
-		},
-		{
-			path: "caisse",
-			element: <CaissePage />,
-			meta: { label: "Caisse", key: "/management/caisse" },
-		},
+               {
+                       path: "system",
+                       meta: { label: "Système", key: "/management/system" },
+                       children: [
+                               {
+                                       path: "organization",
+                                       element: <CaissePage />,
+                                       meta: {
+                                               label: "Caisse",
+                                               key: "/management/system/organization",
+                                       },
+                               },
+                       ],
+               },
 		{
 			path: "blog",
 			element: <Blog />,
