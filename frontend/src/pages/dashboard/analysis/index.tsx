@@ -28,14 +28,26 @@ function Analysis() {
 		queryKey: ["newClients"],
 		queryFn: statsService.getNewClients,
 	});
-	const { data: yearlySales } = useQuery({
-		queryKey: ["yearlySales"],
-		queryFn: statsService.getYearlySales,
-	});
-	const { data: weeklySales } = useQuery({
-		queryKey: ["weeklySales"],
-		queryFn: statsService.getWeeklySales,
-	});
+        const { data: yearlySales } = useQuery({
+                queryKey: ["yearlySales"],
+                queryFn: statsService.getYearlySales,
+        });
+        const { data: weeklySales } = useQuery({
+                queryKey: ["weeklySales"],
+                queryFn: statsService.getWeeklySales,
+        });
+        const { data: currentStock } = useQuery({
+                queryKey: ["currentStock"],
+                queryFn: statsService.getCurrentStock,
+        });
+        const { data: monthlySales } = useQuery({
+                queryKey: ["monthlySales"],
+                queryFn: statsService.getMonthlySales,
+        });
+        const { data: bestSellers } = useQuery({
+                queryKey: ["bestSellersLastEvent"],
+                queryFn: statsService.getBestSellersLastEvent,
+        });
 
 	return (
 		<div className="p-2">
@@ -74,29 +86,29 @@ function Analysis() {
 					/>
 				</Col>
 				<Col lg={6} md={12} span={24}>
-					<AnalysisCard
-						cover={glass_buy}
-						title={
-							yearlySales !== undefined
-								? `${yearlySales.toLocaleString("fr-FR")} €`
-								: "--"
-						}
-						subtitle="Stock Actuel"
-						style={{
-							color: themeVars.colors.palette.warning.dark,
-							backgroundColor: `rgba(${themeVars.colors.palette.warning.defaultChannel}, .2)`,
-						}}
-					/>
-				</Col>
-				<Col lg={6} md={12} span={24}>
-					<AnalysisCard
-						cover={glass_message}
-						title={
-							weeklySales !== undefined
-								? `${weeklySales.toLocaleString("fr-FR")} €`
-								: "--"
-						}
-						subtitle="Ventes ce mois"
+                                        <AnalysisCard
+                                                cover={glass_buy}
+                                                title={
+                                                        currentStock !== undefined
+                                                                ? currentStock.toLocaleString("fr-FR")
+                                                                : "--"
+                                                }
+                                                subtitle="Stock Actuel"
+                                                style={{
+                                                        color: themeVars.colors.palette.warning.dark,
+                                                        backgroundColor: `rgba(${themeVars.colors.palette.warning.defaultChannel}, .2)`,
+                                                }}
+                                        />
+                                </Col>
+                                <Col lg={6} md={12} span={24}>
+                                        <AnalysisCard
+                                                cover={glass_message}
+                                                title={
+                                                        monthlySales !== undefined
+                                                                ? `${monthlySales.toLocaleString("fr-FR")} €`
+                                                                : "--"
+                                                }
+                                                subtitle="Ventes ce mois"
 						style={{
 							color: themeVars.colors.palette.error.dark,
 							backgroundColor: `rgba(${themeVars.colors.palette.error.defaultChannel}, .2)`,
@@ -119,11 +131,14 @@ function Analysis() {
 			</Row>
 
 			<Row gutter={[16, 16]} className="mt-8" justify="center">
-				<Col span={24} lg={12} xl={16}>
-					<Card title="Best-sellers de la derniére convention">
-						<ChartBar />
-					</Card>
-				</Col>
+                                <Col span={24} lg={12} xl={16}>
+                                        <Card title="Best-sellers de la derniére convention">
+                                                <ChartBar
+                                                        categories={bestSellers?.map((b) => b.name) || []}
+                                                        data={bestSellers?.map((b) => b.quantity) || []}
+                                                />
+                                        </Card>
+                                </Col>
 				<Col span={24} lg={12} xl={8}>
 					<Card title="Manga 2025">
 						<ChartPie />

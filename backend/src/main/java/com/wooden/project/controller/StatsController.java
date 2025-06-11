@@ -46,4 +46,19 @@ public class StatsController {
         return statisticsService.getLast20Sales();
     }
 
+    @GetMapping("/getCurrentStock")
+    public int getCurrentStock() {
+        return statisticsService.getCurrentStock();
+    }
+
+    @GetMapping("/getMonthlySales")
+    public double getMonthlySales() {
+        return statisticsService.getMonthlySales();
+    }
+
+    @GetMapping("/getBestSellersLastEvent")
+    public Object getBestSellersLastEvent() {
+        return statisticsService.getBestSellersLastEvent();
+    }
+
 }

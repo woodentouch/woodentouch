@@ -23,5 +23,8 @@ public interface PanierRepo extends JpaRepository<Panier, Long> {
     @Query("SELECT SUM(p.prix_panier) FROM Panier p")
     Double sumTotalRevenue();
 
+    @Query("SELECT SUM(p.prix_panier) FROM Panier p WHERE YEAR(p.dateAjout) = YEAR(current_date) AND MONTH(p.dateAjout) = MONTH(current_date)")
+    Double monthlySales();
+
     List<Panier> findTop20ByOrderByDateAjoutDesc();
 }

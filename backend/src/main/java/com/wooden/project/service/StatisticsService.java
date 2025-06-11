@@ -1,8 +1,10 @@
 package com.wooden.project.service;
 
 import com.wooden.project.model.Panier;
-import com.wooden.project.repository.UserRepo;
-import com.wooden.project.repository.PanierRepo;
+import com.wooden.project.model.Produit;
+import com.wooden.project.model.evenement;
+import com.wooden.project.model.dto.BestSellerDTO;
+import com.wooden.project.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,10 +18,16 @@ public class StatisticsService {
 
     private final PanierRepo panierRepo;
     private final UserRepo UserRepo;
+    private final StockRepository stockRepository;
+    private final eventRepo eventRepository;
+    private final PanierItemRepository panierItemRepository;
 
-    public StatisticsService(PanierRepo panierRepo, UserRepo UserRepo) {
+    public StatisticsService(PanierRepo panierRepo, UserRepo UserRepo, StockRepository stockRepository, eventRepo eventRepository, PanierItemRepository panierItemRepository) {
         this.panierRepo = panierRepo;
         this.UserRepo = UserRepo;
+        this.stockRepository = stockRepository;
+        this.eventRepository = eventRepository;
+        this.panierItemRepository = panierItemRepository;
     }
 
 
@@ -45,5 +53,29 @@ public class StatisticsService {
 
     public List<Panier> getLast20Sales() {
         return panierRepo.findTop20ByOrderByDateAjoutDesc();
+    }
+
+    public int getCurrentStock() {
+        Integer result = stockRepository.totalQuantity();
+        return result != null ? result : 0;
+    }
+
+    public double getMonthlySales() {
+        Double result = panierRepo.monthlySales();
+        return result != null ? result : 0.0;
+    }
+
+    public java.util.List<BestSellerDTO> getBestSellersLastEvent() {
+        evenement last = eventRepository.findTopByOrderByDateFinDesc();
+        if (last == null) return java.util.List.of();
+        java.util.List<Object[]> rows = panierItemRepository.findBestSellersForEvent(last.getEventId());
+        return rows.stream()
+                .map(obj -> {
+                    Produit p = (Produit) obj[0];
+                    Long qty = (Long) obj[1];
+                    String name = p.getLicence_id().getName_license() + " " + p.getModele() + " " + p.getTaille();
+                    return new BestSellerDTO(name, qty.intValue());
+                })
+                .toList();
     }
 }

@@ -1,13 +1,17 @@
 import Chart from "@/components/chart/chart";
 import useChart from "@/components/chart/useChart";
 
-const series = [44, 55, 13, 43];
-export default function ChartPie() {
-	const chartOptions = useChart({
-		labels: ["DBZ", "OnePiece", "Europe", "Africa"],
-		legend: {
-			horizontalAlign: "center",
-		},
+type Props = { labels?: string[]; data?: number[] };
+
+const defaultSeries = [44, 55, 13, 43];
+const defaultLabels = ["DBZ", "OnePiece", "Europe", "Africa"];
+
+export default function ChartPie({ labels = defaultLabels, data = defaultSeries }: Props) {
+        const chartOptions = useChart({
+                labels,
+                legend: {
+                        horizontalAlign: "center",
+                },
 		stroke: {
 			show: false,
 		},
@@ -31,7 +35,5 @@ export default function ChartPie() {
 		},
 	});
 
-	return (
-		<Chart type="pie" series={series} options={chartOptions} height={320} />
-	);
+        return <Chart type="pie" series={data} options={chartOptions} height={320} />;
 }
