@@ -12,6 +12,7 @@ const AccountPage = lazy(() => import("@/pages/management/user/account"));
 
 const Blog = lazy(() => import("@/pages/management/blog"));
 const CaissePage = lazy(() => import("@/pages/management/caisse"));
+const StockPage = lazy(() => import("@/pages/management/system/permission"));
 
 // ✅ Section principale "Management" sans "Stock"
 const management: AppRouteObject = {
@@ -68,6 +69,14 @@ const management: AppRouteObject = {
                                        meta: {
                                                label: "Caisse",
                                                key: "/management/system/organization",
+                                       },
+                               },
+                               {
+                                       path: "permission",
+                                       element: <StockPage />,
+                                       meta: {
+                                               label: "Stock",
+                                               key: "/management/system/permission",
                                        },
                                },
                        ],
