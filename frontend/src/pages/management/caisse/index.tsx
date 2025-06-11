@@ -25,13 +25,17 @@ const PRICE_MAP: Record<string, number> = {
        "XS offerte": 0,
 };
 
+const LOCAL_PRODUCTS: Product[] = [
+       { id_produit: 0, modele: "Dressrossa" },
+];
+
 export default function CaissePage() {
         const { data: products } = useQuery({
                 queryKey: ["products"],
                 queryFn: productService.getProducts,
         });
 
-        const productList = Array.isArray(products) ? products : [];
+       const productList = Array.isArray(products) && products.length > 0 ? products : LOCAL_PRODUCTS;
 
         const { data: lastSales } = useQuery<any[]>({
                 queryKey: ["lastSales"],
@@ -111,22 +115,6 @@ export default function CaissePage() {
 
 	return (
 		<Space direction="vertical" size="middle" className="w-full">
-			<Card className="border-b flex justify-between">
-				<IconButton onClick={() => history.back()}>
-					<Iconify icon="mdi:close" />
-				</IconButton>
-				<div className="flex gap-2">
-					<IconButton>
-						<Iconify icon="mdi:tag-outline" />
-					</IconButton>
-					<IconButton onClick={clear}>
-						<Iconify icon="mdi:trash-can-outline" />
-					</IconButton>
-					<IconButton>
-						<Iconify icon="mdi:dots-horizontal" />
-					</IconButton>
-				</div>
-			</Card>
                         <Card>
                                 {items.length === 0 ? (
                                         <div className="text-center py-10">Ajouter un article ou un montant</div>
@@ -134,18 +122,21 @@ export default function CaissePage() {
                                         <Table rowKey="name" pagination={false} columns={columns} dataSource={items} />
                                 )}
                         </Card>
-                        <Card className="flex flex-col gap-2 md:flex-row md:justify-between md:items-center">
-                                <div className="flex gap-2">
-                                        <Button type="primary" onClick={() => setModalOpen(true)}>
-                                                + Article
-                                        </Button>
-                                        <Button onClick={() => setAmountModal(true)}>+ Montant</Button>
-                                        <Button onClick={() => setDiscountModal(true)}>Réduction</Button>
-                                </div>
-                                <Button type="primary" disabled={items.length === 0} onClick={() => toast.success("Facturation en cours...")}>
-                                        Facturer ({total}€)
-                                </Button>
-                        </Card>
+                       <Card className="flex flex-col gap-4">
+                               <Space wrap>
+                                       <Button type="primary" onClick={() => setModalOpen(true)}>+ Article</Button>
+                                       <Button onClick={() => setAmountModal(true)}>+ Montant</Button>
+                                       <Button onClick={() => setDiscountModal(true)}>Réduction</Button>
+                               </Space>
+                               <Button
+                                       type="primary"
+                                       block
+                                       disabled={items.length === 0}
+                                       onClick={() => toast.success("Facturation en cours...")}
+                               >
+                                       Facturer ({total}€)
+                               </Button>
+                       </Card>
                         <Modal open={modalOpen} onCancel={() => setModalOpen(false)} footer={null} title="Articles">
                                 <Space direction="vertical" className="w-full">
                                         <Input placeholder="Rechercher" value={search} onChange={(e) => setSearch(e.target.value)} />
