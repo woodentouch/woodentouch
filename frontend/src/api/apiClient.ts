@@ -35,6 +35,11 @@ axiosInstance.interceptors.response.use(
 			return res.data;
 		}
 
+		// Raw API for latest sales → return raw data directly
+		if (res.config.url?.includes("/paniers/latest-sales")) {
+			return res.data;
+		}
+
 		// Sinon, logique standard Result
 		if (!res.data) throw new Error(t("sys.api.apiRequestFailed"));
 
@@ -84,8 +89,8 @@ class APIClient {
 		return new Promise((resolve, reject) => {
 			axiosInstance
 				.request<any, AxiosResponse<any>>(config)
-				.then((res: AxiosResponse<any>) => {
-					resolve(res as unknown as Promise<T>);
+				.then((res) => {
+					resolve(res as unknown as T);
 				})
 				.catch((e: Error | AxiosError) => {
 					reject(e);
