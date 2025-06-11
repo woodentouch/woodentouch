@@ -1,110 +1,208 @@
-import { Button, Card, Popconfirm, Tag } from "antd";
-import Table, { type ColumnsType } from "antd/es/table";
-import { isNil } from "ramda";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
+import {
+	Button,
+	Card,
+	Dropdown,
+	Menu,
+	Popconfirm,
+	Tag,
+	InputNumber,
+	Table,
+} from "antd";
+import type { ColumnsType } from "antd/es/table";
 
-import { IconButton, Iconify, SvgIcon } from "@/components/icon";
-import { useUserPermission } from "@/store/userStore";
+import { IconButton, Iconify } from "@/components/icon";
+import { type License, type Model, STOCK_DATA } from "@/_mock/stock";
+import ModelModal, { type ModelModalProps } from "./model-modal";
+import LicenseModal, { type LicenseModalProps } from "./license-modal";
 
-import PermissionModal, { type PermissionModalProps } from "./permission-modal";
+interface ModelRow extends Model {
+	licenseId: string;
+}
 
-import type { Permission } from "#/entity";
-import { BasicStatus, PermissionType } from "#/enum";
-
-const defaultPermissionValue: Permission = {
-	id: "",
-	parentId: "",
-	name: "",
-	label: "",
-	route: "",
-	component: "",
-	icon: "",
-	hide: false,
-	status: BasicStatus.ENABLE,
-	type: PermissionType.CATALOGUE,
-};
-export default function PermissionPage() {
-	const permissions = useUserPermission();
-	const { t } = useTranslation();
-
-	const [permissionModalProps, setPermissionModalProps] =
-		useState<PermissionModalProps>({
-			formValue: { ...defaultPermissionValue },
-			title: "New",
+export default function StockPage() {
+	const [licenses, setLicenses] = useState<License[]>(STOCK_DATA);
+	const [modelModalProps, setModelModalProps] = useState<ModelModalProps>({
+		licenses,
+		formValue: {},
+		title: "New Model",
+		show: false,
+		onOk: (data) => {
+			const { licenseId, ...rest } = data;
+			if (!licenseId) return;
+			setLicenses((prev) =>
+				prev.map((l) =>
+					l.id === licenseId
+						? {
+								...l,
+								models: [
+									...l.models,
+									{ id: Date.now().toString(), ...rest } as Model,
+								],
+							}
+						: l,
+				),
+			);
+			setModelModalProps((p) => ({ ...p, show: false }));
+		},
+		onCancel: () => setModelModalProps((p) => ({ ...p, show: false })),
+	});
+	const [licenseModalProps, setLicenseModalProps] = useState<LicenseModalProps>(
+		{
+			formValue: {},
+			title: "New Licence",
 			show: false,
-			onOk: () => {
-				setPermissionModalProps((prev) => ({ ...prev, show: false }));
+			onOk: (data) => {
+				setLicenses((prev) => [
+					...prev,
+					{ id: Date.now().toString(), name: data.name ?? "", models: [] },
+				]);
+				setLicenseModalProps((p) => ({ ...p, show: false }));
 			},
-			onCancel: () => {
-				setPermissionModalProps((prev) => ({ ...prev, show: false }));
-			},
-		});
-	const columns: ColumnsType<Permission> = [
+			onCancel: () => setLicenseModalProps((p) => ({ ...p, show: false })),
+		},
+	);
+
+	const openNewMenu = (
+		<Menu
+			items={[
+				{ key: "lic", label: "Créer une nouvelle licence" },
+				{ key: "model", label: "Ajouter un modèle" },
+			]}
+			onClick={(info) => {
+				if (info.key === "lic") {
+					setLicenseModalProps((p) => ({ ...p, show: true }));
+				} else {
+					setModelModalProps((p) => ({ ...p, show: true }));
+				}
+			}}
+		/>
+	);
+
+	const addDuplicate = (licenseId: string, model: Model) => {
+		setLicenses((prev) =>
+			prev.map((l) =>
+				l.id === licenseId
+					? {
+							...l,
+							models: [...l.models, { ...model, id: Date.now().toString() }],
+						}
+					: l,
+			),
+		);
+	};
+
+	const deleteModel = (licenseId: string, modelId: string) => {
+		setLicenses((prev) =>
+			prev.map((l) =>
+				l.id === licenseId
+					? { ...l, models: l.models.filter((m) => m.id !== modelId) }
+					: l,
+			),
+		);
+	};
+
+	const updateModel = (
+		licenseId: string,
+		modelId: string,
+		data: Partial<Model>,
+	) => {
+		setLicenses((prev) =>
+			prev.map((l) =>
+				l.id === licenseId
+					? {
+							...l,
+							models: l.models.map((m) =>
+								m.id === modelId ? { ...m, ...data } : m,
+							),
+						}
+					: l,
+			),
+		);
+	};
+
+	const modelColumns: ColumnsType<ModelRow> = [
 		{
 			title: "Name",
 			dataIndex: "name",
-			width: 300,
-			render: (_, record) => <div>{t(record.label)}</div>,
-		},
-		{
-			title: "Type",
-			dataIndex: "type",
-			width: 60,
-			render: (_, record) => (
-				<Tag color="processing">{PermissionType[record.type]}</Tag>
+			render: (text, record) => (
+				<span>
+					{text} <Tag className="ml-2">{record.quantity}</Tag>
+				</span>
 			),
 		},
 		{
-			title: "Icon",
-			dataIndex: "icon",
-			width: 60,
-			render: (icon: string) => {
-				if (isNil(icon)) return "";
-				if (icon.startsWith("ic")) {
-					return (
-						<SvgIcon icon={icon} size={18} className="ant-menu-item-icon" />
-					);
-				}
-				return <Iconify icon={icon} size={18} className="ant-menu-item-icon" />;
+			title: "Licence",
+			dataIndex: "licenseId",
+			render: (id) => {
+				const l = licenses.find((lic) => lic.id === id);
+				return <Tag color="processing">{l?.name}</Tag>;
 			},
 		},
 		{
-			title: "Component",
-			dataIndex: "component",
+			title: "Stock Minimum",
+			dataIndex: "minStock",
+			render: (min, record) => (
+				<InputNumber
+					min={0}
+					value={min}
+					onChange={(v) =>
+						updateModel(record.licenseId, record.id, { minStock: Number(v) })
+					}
+				/>
+			),
 		},
 		{
 			title: "Status",
-			dataIndex: "status",
-			align: "center",
-			width: 120,
-			render: (status) => (
-				<Tag color={status === BasicStatus.DISABLE ? "error" : "success"}>
-					{status === BasicStatus.DISABLE ? "Disable" : "Enable"}
-				</Tag>
-			),
+			dataIndex: "quantity",
+			render: (_, record) => {
+				let color = "success";
+				let text = "Satisfaisant";
+				if (record.quantity === 0) {
+					color = "error";
+					text = "Stock zéro";
+				} else if (record.quantity < record.minStock) {
+					color = "warning";
+					text = "Graveur nécessaire";
+				}
+				return <Tag color={color}>{text}</Tag>;
+			},
 		},
-		{ title: "Order", dataIndex: "order", width: 60 },
 		{
 			title: "Action",
-			key: "operation",
+			key: "action",
 			align: "center",
-			width: 100,
 			render: (_, record) => (
-				<div className="flex w-full justify-end text-gray">
-					{record?.type === PermissionType.CATALOGUE && (
-						<IconButton onClick={() => onCreate(record.id)}>
-							<Iconify icon="gridicons:add-outline" size={18} />
-						</IconButton>
-					)}
-					<IconButton onClick={() => onEdit(record)}>
+				<div className="flex justify-end text-gray">
+					<IconButton onClick={() => addDuplicate(record.licenseId, record)}>
+						<Iconify icon="gridicons:add-outline" size={18} />
+					</IconButton>
+					<IconButton
+						onClick={() =>
+							setModelModalProps({
+								...modelModalProps,
+								licenses,
+								show: true,
+								title: "Edit",
+								formValue: { ...record, licenseId: record.licenseId },
+								onOk: (data) => {
+									updateModel(record.licenseId, record.id, {
+										name: data.name ?? record.name,
+										quantity: data.quantity ?? record.quantity,
+										minStock: data.minStock ?? record.minStock,
+									});
+									setModelModalProps((p) => ({ ...p, show: false }));
+								},
+							})
+						}
+					>
 						<Iconify icon="solar:pen-bold-duotone" size={18} />
 					</IconButton>
 					<Popconfirm
-						title="Delete the Permission"
+						title="Supprimer"
 						okText="Yes"
 						cancelText="No"
-						placement="left"
+						onConfirm={() => deleteModel(record.licenseId, record.id)}
 					>
 						<IconButton>
 							<Iconify
@@ -119,43 +217,47 @@ export default function PermissionPage() {
 		},
 	];
 
-	const onCreate = (parentId?: string) => {
-		setPermissionModalProps((prev) => ({
-			...prev,
-			show: true,
-			...defaultPermissionValue,
-			title: "New",
-			formValue: { ...defaultPermissionValue, parentId: parentId ?? "" },
-		}));
-	};
+	const licenseColumns: ColumnsType<License> = [
+		{
+			title: "Licence",
+			dataIndex: "name",
+			render: (name) => <Tag color="processing">{name}</Tag>,
+		},
+	];
 
-	const onEdit = (formValue: Permission) => {
-		setPermissionModalProps((prev) => ({
-			...prev,
-			show: true,
-			title: "Edit",
-			formValue,
-		}));
-	};
 	return (
 		<Card
-			title="Permission List"
+			title="Stock"
 			extra={
-				<Button type="primary" onClick={() => onCreate()}>
-					New
-				</Button>
+				<Dropdown overlay={openNewMenu} trigger={["click"]}>
+					<Button type="primary">New</Button>
+				</Dropdown>
 			}
 		>
 			<Table
 				rowKey="id"
-				size="small"
-				scroll={{ x: "max-content" }}
+				columns={licenseColumns}
+				expandable={{
+					expandedRowRender: (record) => {
+						const data: ModelRow[] = record.models.map((m) => ({
+							...m,
+							licenseId: record.id,
+						}));
+						return (
+							<Table
+								rowKey="id"
+								columns={modelColumns}
+								dataSource={data}
+								pagination={false}
+							/>
+						);
+					},
+				}}
+				dataSource={licenses}
 				pagination={false}
-				columns={columns}
-				dataSource={permissions}
 			/>
-
-			<PermissionModal {...permissionModalProps} />
+			<ModelModal {...modelModalProps} licenses={licenses} />
+			<LicenseModal {...licenseModalProps} />
 		</Card>
 	);
 }
