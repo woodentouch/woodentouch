@@ -2,8 +2,8 @@ import { Menu, type MenuProps } from "antd";
 import { useMemo } from "react";
 import { useNavigate } from "react-router";
 
-import { useFlattenedRoutes, usePathname, usePermissionRoutes, useRouteToMenuFn } from "@/router/hooks";
-import { menuFilter } from "@/router/utils";
+import { useFlattenedRoutes, usePathname } from "@/router/hooks";
+import { BarChartOutlined, DashboardOutlined, UserOutlined } from "@ant-design/icons";
 
 import { themeVars } from "@/theme/theme.css";
 import { NAV_HORIZONTAL_HEIGHT } from "../config";
@@ -12,14 +12,32 @@ export default function NavHorizontal() {
 	const navigate = useNavigate();
 	const pathname = usePathname();
 
-	const routeToMenuFn = useRouteToMenuFn();
-	const permissionRoutes = usePermissionRoutes();
-	const flattenedRoutes = useFlattenedRoutes();
-
-	const menuList = useMemo(() => {
-		const menuRoutes = menuFilter(permissionRoutes);
-		return routeToMenuFn(menuRoutes);
-	}, [routeToMenuFn, permissionRoutes]);
+        const flattenedRoutes = useFlattenedRoutes();
+        const menuList = useMemo(
+                () => [
+                        {
+                                key: "/dashboard/analysis",
+                                label: "Dashboard",
+                                icon: <DashboardOutlined />,
+                        },
+                        {
+                                key: "/management/system/organization",
+                                label: "Ventes",
+                                icon: <UserOutlined />,
+                        },
+                        {
+                                key: "/management/system/permission",
+                                label: "Stock",
+                                icon: <BarChartOutlined />,
+                        },
+                        {
+                                key: "/components/chart",
+                                label: "Statistiques",
+                                icon: <BarChartOutlined />,
+                        },
+                ],
+                [],
+        );
 
 	const selectedKeys = useMemo(() => [pathname], [pathname]);
 
