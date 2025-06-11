@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface eventRepo extends JpaRepository<evenement, Long> {
+    evenement findTopByOrderByDateFinDesc();
 }

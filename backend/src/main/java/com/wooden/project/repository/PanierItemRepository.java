@@ -24,4 +24,7 @@ public interface PanierItemRepository extends JpaRepository<PanierItem, Long> {
      */
     @Query("SELECT pi FROM PanierItem pi WHERE pi.panier.id_panier = :idPanier")
     List<PanierItem> findByPanierId(@Param("idPanier") Long idPanier);
+
+    @Query("SELECT pi.produit as produit, SUM(pi.quantite) as quantite FROM PanierItem pi WHERE pi.panier.event.eventId = :eventId GROUP BY pi.produit ORDER BY quantite DESC")
+    List<Object[]> findBestSellersForEvent(@Param("eventId") Long eventId);
 }
