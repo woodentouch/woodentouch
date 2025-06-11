@@ -35,4 +35,15 @@ public class Produit {
         this.modele = modele;
     }
 
+    public String getModele() {
+        return modele;
+    }
+
+    public Taille getTaille() {
+        return taille;
+    }
+
+    public licence getLicence_id() {
+        return licence_id;
+    }
 }

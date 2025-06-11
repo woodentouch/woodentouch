@@ -52,4 +52,28 @@ public class Panier {
         this.prix_panier = prix_panier;
         this.event = event;
     }
+
+    public String getMode_paiement() {
+        return mode_paiement;
+    }
+
+    public Double getPrix_panier() {
+        return prix_panier;
+    }
+
+    public evenement getEvent() {
+        return event;
+    }
+
+    public Date getDateAjout() {
+        return dateAjout;
+    }
+
+    public Long getId_panier() {
+        return id_panier;
+    }
+
+    public List<PanierItem> getItems() {
+        return items;
+    }
 }

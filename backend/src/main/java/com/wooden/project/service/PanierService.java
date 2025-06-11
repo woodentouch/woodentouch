@@ -10,4 +10,5 @@ public interface PanierService extends BaseService<Panier,Long> {
     void removeItem(Long itemId);
     PanierItem updateItemQuantity(Long itemId, int quantity);
     List<PanierItem> getItems(Long panierId);
+    List<Panier> findLatest20();
 }
