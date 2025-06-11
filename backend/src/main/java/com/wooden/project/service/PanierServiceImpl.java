@@ -82,6 +82,8 @@ public class PanierServiceImpl extends BaseServiceImpl<Panier,Long> implements P
 
     @Override
     public java.util.List<Panier> findLatest20() {
-        return panierRepository.findTop20ByOrderByDateAjoutDesc();
+        org.springframework.data.domain.Pageable top20 =
+                org.springframework.data.domain.PageRequest.of(0, 20);
+        return panierRepository.findLatestWithItems(top20);
     }
 }
