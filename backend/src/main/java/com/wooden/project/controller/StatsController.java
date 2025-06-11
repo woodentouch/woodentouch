@@ -5,6 +5,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
+import com.wooden.project.dto.BestSellerDTO;
+import com.wooden.project.dto.LicenseStatDTO;
+
 @RestController
 @RequestMapping("/api/stats")
 public class StatsController {
@@ -18,6 +23,11 @@ public class StatsController {
     @GetMapping("/getWeeklySales")
     public double getWeeklySales() {
         return statisticsService.getWeeklySales();
+    }
+    
+    @GetMapping("/getMonthlySales")
+    public double getMonthlySales() {
+        return statisticsService.getMonthlySales();
     }
 
     @GetMapping("/getNewClients")
@@ -33,6 +43,16 @@ public class StatsController {
         }
         return statisticsService.getYearlySales();
     }
+    
+    @GetMapping("/getTotalStockValue")
+    public Double getTotalStockValue() {
+        return statisticsService.getTotalStockValue();
+    }
+    
+    @GetMapping("/getTotalStockCount")
+    public int getTotalStockCount() {
+        return statisticsService.getTotalStockCount();
+    }
 
 
     @GetMapping("/getChiffreAffaire")
@@ -45,5 +65,14 @@ public class StatsController {
     public Object getLast20Sales() {
         return statisticsService.getLast20Sales();
     }
-
+    
+    @GetMapping("/getBestSellersLastEvent")
+    public List<BestSellerDTO> getBestSellersLastEvent() {
+        return statisticsService.getBestSellersLastEvent();
+    }
+    
+    @GetMapping("/getLicenseSalesStats")
+    public List<LicenseStatDTO> getLicenseSalesStats() {
+        return statisticsService.getLicenseSalesStats();
+    }
 }

@@ -7,7 +7,11 @@ import com.wooden.project.repository.PanierItemRepository;
 import com.wooden.project.repository.PanierRepo;
 import com.wooden.project.repository.VenteRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class PanierServiceImpl extends BaseServiceImpl<Panier,Long> implements PanierService {
@@ -74,5 +78,10 @@ public class PanierServiceImpl extends BaseServiceImpl<Panier,Long> implements P
     @Override
     public java.util.List<PanierItem> getItems(Long panierId) {
         return panierItemRepository.findByPanierId(panierId);
+    }
+
+    @Override
+    public java.util.List<Panier> findLatest20() {
+        return panierRepository.findTop20ByOrderByDateAjoutDesc();
     }
 }
