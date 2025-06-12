@@ -93,8 +93,8 @@
 			},
 			"system": {
 				"index": "系统",
-				"organization": "组织",
-				"permission": "权限",
+				"caisse": "销售",
+				"stock": "库存",
 				"role": "角色",
 				"user": "用户",
 				"user_detail": "用户详情"
