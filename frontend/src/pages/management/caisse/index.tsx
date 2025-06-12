@@ -26,13 +26,13 @@ const PRICE_MAP: Record<string, number> = {
 };
 
 const LOCAL_PRODUCTS: Product[] = [
-       { id_produit: 0, modele: "Dressrossa" },
+       { id: 0, model: "Dressrossa", quantity: 0, stockMinimum: 0 },
 ];
 
 export default function CaissePage() {
         const { data: products } = useQuery({
-                queryKey: ["products"],
-                queryFn: productService.getProducts,
+                queryKey: ["products", 0],
+                queryFn: ({ queryKey }) => productService.getProducts(queryKey[1] as number),
         });
 
        const productList = Array.isArray(products) && products.length > 0 ? products : LOCAL_PRODUCTS;
@@ -81,11 +81,11 @@ export default function CaissePage() {
                 },
         ];
 
-        const onAddItem = (product: Product, variant: string) => {
-                addItem({
-                        idProduit: product.id_produit,
-                        name: `${product.modele} - ${variant}`,
-                        variante: variant,
+const onAddItem = (product: Product, variant: string) => {
+        addItem({
+                idProduit: product.id,
+                name: `${product.model} - ${variant}`,
+                variante: variant,
                         unitPrice: PRICE_MAP[variant],
                         quantity: 1,
                 });
@@ -153,13 +153,13 @@ export default function CaissePage() {
                                         <Input placeholder="Rechercher" value={search} onChange={(e) => setSearch(e.target.value)} />
                                         {productList
                                                 .filter((p) =>
-                                                        p.modele
+                                                        p.model
                                                                 .toLowerCase()
                                                                 .includes(search.toLowerCase()),
                                                 )
                                                 .map((p) => (
-                                                <Card key={p.id_produit} className="w-full">
-                                                        <Typography.Text>{p.modele}</Typography.Text>
+                                                <Card key={p.id} className="w-full">
+                                                        <Typography.Text>{p.model}</Typography.Text>
                                                         <div className="mt-2 flex gap-2 flex-wrap">
                                                                 {VARIANTS.map((v) => (
                                                                         <Button key={v} onClick={() => onAddItem(p, v)}>
