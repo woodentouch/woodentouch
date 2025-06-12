@@ -11,6 +11,19 @@ import { themeVars } from "@/theme/theme.css";
 import { Card, Col, Row, Typography } from "antd";
 import { useQuery } from "@tanstack/react-query";
 import statsService from "@/api/services/statsService";
+
+interface BestSeller {
+        productName: string;
+        licenseName: string;
+        quantitySold: number;
+        total: number;
+}
+
+interface LicenseStat {
+        licenseName: string;
+        count: number;
+        percentage: number;
+}
 import AnalysisCard from "./analysis-card";
 import AnalysisNews from "./analysis-news";
 import AnalysisOrderTimeline from "./analysis-order-timeline";
@@ -36,14 +49,14 @@ function Analysis() {
 		queryKey: ["monthlySales"],
 		queryFn: statsService.getMonthlySales,
 	});
-	const { data: bestSellers } = useQuery({
-		queryKey: ["bestSellersLastEvent"],
-		queryFn: statsService.getBestSellersLastEvent,
-	});
-	const { data: licenseStats } = useQuery({
-		queryKey: ["licenseSalesStats"],
-		queryFn: statsService.getLicenseSalesStats,
-	});
+        const { data: bestSellers } = useQuery<BestSeller[]>({
+                queryKey: ["bestSellersLastEvent"],
+                queryFn: () => statsService.getBestSellersLastEvent() as Promise<BestSeller[]>,
+        });
+        const { data: licenseStats } = useQuery<LicenseStat[]>({
+                queryKey: ["licenseSalesStats"],
+                queryFn: () => statsService.getLicenseSalesStats() as Promise<LicenseStat[]>,
+        });
 
 	// Exclude 'support' entries and sort descending
 	const filteredBestSellers = bestSellers

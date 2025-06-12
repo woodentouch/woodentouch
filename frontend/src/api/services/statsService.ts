@@ -30,9 +30,9 @@ const getTotalStockValue = () =>
 const getTotalStockCount = () =>
 	apiClient.get<number>({ url: StatsApi.TotalStockCount });
 const getBestSellersLastEvent = () =>
-	apiClient.get<BestSellerDTO[]>({ url: StatsApi.BestSellersLastEvent });
+        apiClient.get<unknown>({ url: StatsApi.BestSellersLastEvent });
 const getLicenseSalesStats = () =>
-	apiClient.get<LicenseStatDTO[]>({ url: StatsApi.LicenseSalesStats });
+        apiClient.get<unknown>({ url: StatsApi.LicenseSalesStats });
 
 export default {
 	getWeeklySales,
