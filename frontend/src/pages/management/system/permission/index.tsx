@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Card, Dropdown, Menu, Popconfirm, Tag, InputNumber, Table } from "antd";
+import { Button, Card, Dropdown, Menu, Popconfirm, Tag, InputNumber, Table, Collapse } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 import { IconButton, Iconify } from "@/components/icon";
@@ -289,28 +289,79 @@ export default function StockPage() {
                                                 if (exp) loadProducts(record.id);
                                         },
                                         expandedRowRender: (record) => {
-                                                const data: ModelRow[] = record.models.map((m) => ({
-                                                        ...m,
-                                                        licenseId: record.id,
-                                                }));
-                                                return (
-                                                        <Table
-                                                                rowKey="id"
-                                                                columns={modelColumns}
-                                                                dataSource={data}
-                                                                pagination={false}
-                                                                expandable={{
-                                                                        expandedRowRender: (m) => (
-                                                                                <Table
-                                                                                        rowKey="size"
-                                                                                        columns={variantColumns}
-                                                                                        dataSource={m.variants}
-                                                                                        pagination={false}
+                                                const panels = record.models.map((m) => {
+                                                        const val = typeof m.value === "number" ? m.value : 0;
+                                                        let color: "success" | "warning" | "error" = "success";
+                                                        let text = "Satisfaisant";
+                                                        if (m.quantity === 0) {
+                                                                color = "error";
+                                                                text = "Stock zéro";
+                                                        } else if (m.quantity < m.minStock) {
+                                                                color = "warning";
+                                                                text = "Graveur nécessaire";
+                                                        }
+                                                        const header = (
+                                                                <div className="flex items-center justify-between">
+                                                                        <span>{`${m.name} (${val.toFixed(2)}€)`}</span>
+                                                                        <div className="flex items-center gap-2">
+                                                                                <InputNumber
+                                                                                        min={0}
+                                                                                        value={m.minStock}
+                                                                                        onChange={(v) =>
+                                                                                                updateModel(record.id, m.id, {
+                                                                                                        minStock: Number(v),
+                                                                                                })
+                                                                                        }
                                                                                 />
-                                                                        ),
-                                                                }}
-                                                        />
-                                                );
+                                                                                <Tag color={color}>{text}</Tag>
+                                                                                <IconButton
+                                                                                        onClick={() =>
+                                                                                                setModelModalProps({
+                                                                                                        ...modelModalProps,
+                                                                                                        licenses,
+                                                                                                        show: true,
+                                                                                                        title: "Edit",
+                                                                                                        formValue: { ...m, licenseId: record.id },
+                                                                                                        onOk: (data) => {
+                                                                                                                updateModel(record.id, m.id, {
+                                                                                                                        name: data.name ?? m.name,
+                                                                                                                        quantity: data.quantity ?? m.quantity,
+                                                                                                                        minStock: data.minStock ?? m.minStock,
+                                                                                                                });
+                                                                                                                setModelModalProps((p) => ({ ...p, show: false }));
+                                                                                                        },
+                                                                                                })
+                                                                                        }
+                                                                                >
+                                                                                        <Iconify icon="solar:pen-bold-duotone" size={18} />
+                                                                                </IconButton>
+                                                                                <Popconfirm
+                                                                                        title="Supprimer"
+                                                                                        okText="Yes"
+                                                                                        cancelText="No"
+                                                                                        onConfirm={() => deleteModel(record.id, m.id)}
+                                                                                >
+                                                                                        <IconButton>
+                                                                                                <Iconify icon="mingcute:delete-2-fill" size={18} className="text-error" />
+                                                                                        </IconButton>
+                                                                                </Popconfirm>
+                                                                        </div>
+                                                                </div>
+                                                        );
+                                                        return {
+                                                                key: m.id,
+                                                                label: header,
+                                                                children: (
+                                                                        <Table
+                                                                                rowKey="size"
+                                                                                columns={variantColumns}
+                                                                                dataSource={m.variants}
+                                                                                pagination={false}
+                                                                        />
+                                                                ),
+                                                        };
+                                                });
+                                                return <Collapse items={panels} />;
                                         },
                                 }}
                                 dataSource={licenses}
