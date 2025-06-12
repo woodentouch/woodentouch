@@ -9,8 +9,12 @@ export interface Product {
 }
 
 // Endpoints shouldn't start with /api because axios baseURL already uses it.
-const getProducts = (licenseId: number) =>
-    apiClient.get<Product[]>({ url: `/products/${licenseId}` });
+// licenseId is optional; if undefined, the backend should return all products
+// instead of filtering by license. This prevents URLs like `/products/[object Object]`.
+const getProducts = (licenseId?: number) => {
+       const url = licenseId !== undefined ? `/products/${licenseId}` : "/products";
+       return apiClient.get<Product[]>({ url });
+};
 
 const addProduct = (data: {
 	licenseId: number;

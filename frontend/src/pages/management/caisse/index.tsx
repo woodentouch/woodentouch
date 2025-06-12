@@ -30,10 +30,10 @@ const LOCAL_PRODUCTS: Product[] = [
 ];
 
 export default function CaissePage() {
-        const { data: products } = useQuery({
-                queryKey: ["products"],
-                queryFn: productService.getProducts,
-        });
+       const { data: products } = useQuery({
+               queryKey: ["products"],
+               queryFn: () => productService.getProducts(),
+       });
 
        const productList = Array.isArray(products) && products.length > 0 ? products : LOCAL_PRODUCTS;
 
