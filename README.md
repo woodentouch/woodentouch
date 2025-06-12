@@ -15,8 +15,15 @@ This repository contains a Spring Boot backend and a React frontend. The project
    ```bash
    cd frontend
    npm install
-   npm run dev
-   ```
+  npm run dev
+  ```
+
+## Default Credentials
+
+Spring Security protects backend routes. Use the following credentials to sign in at `/login`:
+
+- **Username**: `admin`
+- **Password**: `demo1234`
 
 ## Deploying on Railway
 
