@@ -15,6 +15,9 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @Override
     protected JpaRepository<User, Long> getRepository() {
         return userRepo;
@@ -29,8 +32,7 @@ public class UserServiceImpl extends BaseServiceImpl<User, Long> implements User
     public boolean authenticate(String email, String password) {
         Optional<User> user = userRepo.findByEmail(email);
         if (user.isPresent()) {
-            // Comparaison directe sans hachage
-            return password.equals(user.get().getPassword());
+            return passwordEncoder.matches(password, user.get().getPassword());
         }
         return false;
     }
