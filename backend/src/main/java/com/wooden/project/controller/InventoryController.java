@@ -49,7 +49,7 @@ public class InventoryController {
                         s.getId_produit().getId_produit(),
                         s.getId_produit().getModele(),
                         s.getQuantite(),
-                        s.getStockMinimum()
+                        s.getStockMinimum() != null ? s.getStockMinimum() : 0
                 ))
                 .collect(Collectors.toList());
         return Result.success(products);
@@ -63,7 +63,7 @@ public class InventoryController {
                         s.getId_produit().getId_produit(),
                         s.getId_produit().getModele(),
                         s.getQuantite(),
-                        s.getStockMinimum()
+                        s.getStockMinimum() != null ? s.getStockMinimum() : 0
                 ))
                 .collect(Collectors.toList());
         return Result.success(products);

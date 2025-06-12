@@ -21,9 +21,9 @@ public class Stock {
     private Produit id_produit;
     private int quantite;
     @Column(name = "stock_minimum")
-    private int stockMinimum;
+    private Integer stockMinimum;
 
-    public Stock(Produit id_produit, int quantite, int stockMinimum) {
+    public Stock(Produit id_produit, int quantite, Integer stockMinimum) {
         this.id_produit = id_produit;
         this.quantite = quantite;
         this.stockMinimum = stockMinimum;
