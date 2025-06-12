@@ -8,14 +8,16 @@ export interface Product {
 	stockMinimum: number;
 }
 
-const getProducts = (licenseId: number) => apiClient.get<Product[]>({ url: `/api/products/${licenseId}` });
+// Endpoints shouldn't start with /api because axios baseURL already uses it.
+const getProducts = (licenseId: number) =>
+    apiClient.get<Product[]>({ url: `/products/${licenseId}` });
 
 const addProduct = (data: {
 	licenseId: number;
 	model: string;
 	quantity: number;
 	stockMinimum: number;
-}) => apiClient.post<void>({ url: "/api/addProduct", data });
+}) => apiClient.post<void>({ url: "/addProduct", data });
 
 export default {
 	getProducts,
