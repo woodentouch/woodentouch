@@ -12,7 +12,7 @@ const AccountPage = lazy(() => import("@/pages/management/user/account"));
 
 const Blog = lazy(() => import("@/pages/management/blog"));
 const CaissePage = lazy(() => import("@/pages/management/caisse"));
-const StockPage = lazy(() => import("@/pages/management/system/permission"));
+const StockPage = lazy(() => import("@/pages/management/system/stock"));
 
 // ✅ Section principale "Management" sans "Stock"
 const management: AppRouteObject = {
@@ -25,7 +25,9 @@ const management: AppRouteObject = {
 	),
 	meta: {
 		label: "Gestion",
-		icon: <SvgIcon icon="ic-management" className="ant-menu-item-icon" size="24" />,
+		icon: (
+			<SvgIcon icon="ic-management" className="ant-menu-item-icon" size="24" />
+		),
 		key: "/management",
 	},
 	children: [
@@ -59,28 +61,28 @@ const management: AppRouteObject = {
 				},
 			],
 		},
-               {
-                       path: "system",
-                       meta: { label: "Système", key: "/management/system" },
-                       children: [
-                               {
-                                       path: "organization",
-                                       element: <CaissePage />,
-                                       meta: {
-                                               label: "Caisse",
-                                               key: "/management/system/organization",
-                                       },
-                               },
-                               {
-                                       path: "permission",
-                                       element: <StockPage />,
-                                       meta: {
-                                               label: "Stock",
-                                               key: "/management/system/permission",
-                                       },
-                               },
-                       ],
-               },
+		{
+			path: "system",
+			meta: { label: "Système", key: "/management/system" },
+			children: [
+				{
+					path: "caisse",
+					element: <CaissePage />,
+					meta: {
+						label: "Caisse",
+						key: "/management/system/caisse",
+					},
+				},
+				{
+					path: "stock",
+					element: <StockPage />,
+					meta: {
+						label: "Stock",
+						key: "/management/system/stock",
+					},
+				},
+			],
+		},
 		{
 			path: "blog",
 			element: <Blog />,

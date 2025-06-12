@@ -94,8 +94,8 @@
 			},
 			"system": {
 				"index": "System",
-				"organization": "Organization",
-				"permission": "Permission",
+				"caisse": "Sales",
+				"stock": "Stock",
 				"role": "Role",
 				"user": "User",
 				"user_detail": "User Detail"

@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { Button, Card, Dropdown, Menu, Popconfirm, Tag, InputNumber, Table } from "antd";
+import {
+	Button,
+	Card,
+	Dropdown,
+	Menu,
+	Popconfirm,
+	Tag,
+	InputNumber,
+	Table,
+} from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 import { IconButton, Iconify } from "@/components/icon";
@@ -19,7 +28,9 @@ export default function StockPage() {
 	const fetchLicenses = async () => {
 		try {
 			const data = await licenseService.getLicenses();
-			setLicenses(data.map((l) => ({ id: String(l.id), name: l.name, models: [] })));
+			setLicenses(
+				data.map((l) => ({ id: String(l.id), name: l.name, models: [] })),
+			);
 		} catch (e) {
 			alert("Failed to load licenses");
 		}
@@ -75,21 +86,23 @@ export default function StockPage() {
 		},
 		onCancel: () => setModelModalProps((p) => ({ ...p, show: false })),
 	});
-	const [licenseModalProps, setLicenseModalProps] = useState<LicenseModalProps>({
-		formValue: {},
-		title: "New Licence",
-		show: false,
-		onOk: async (data) => {
-			try {
-				await licenseService.addLicense(data.name ?? "");
-				await fetchLicenses();
-				setLicenseModalProps((p) => ({ ...p, show: false }));
-			} catch (e) {
-				alert("Failed to add license");
-			}
+	const [licenseModalProps, setLicenseModalProps] = useState<LicenseModalProps>(
+		{
+			formValue: {},
+			title: "New Licence",
+			show: false,
+			onOk: async (data) => {
+				try {
+					await licenseService.addLicense(data.name ?? "");
+					await fetchLicenses();
+					setLicenseModalProps((p) => ({ ...p, show: false }));
+				} catch (e) {
+					alert("Failed to add license");
+				}
+			},
+			onCancel: () => setLicenseModalProps((p) => ({ ...p, show: false })),
 		},
-		onCancel: () => setLicenseModalProps((p) => ({ ...p, show: false })),
-	});
+	);
 
 	const openNewMenu = (
 		<Menu
@@ -109,17 +122,27 @@ export default function StockPage() {
 
 	const deleteModel = (licenseId: string, modelId: string) => {
 		setLicenses((prev) =>
-			prev.map((l) => (l.id === licenseId ? { ...l, models: l.models.filter((m) => m.id !== modelId) } : l)),
+			prev.map((l) =>
+				l.id === licenseId
+					? { ...l, models: l.models.filter((m) => m.id !== modelId) }
+					: l,
+			),
 		);
 	};
 
-	const updateModel = (licenseId: string, modelId: string, data: Partial<Model>) => {
+	const updateModel = (
+		licenseId: string,
+		modelId: string,
+		data: Partial<Model>,
+	) => {
 		setLicenses((prev) =>
 			prev.map((l) =>
 				l.id === licenseId
 					? {
 							...l,
-							models: l.models.map((m) => (m.id === modelId ? { ...m, ...data } : m)),
+							models: l.models.map((m) =>
+								m.id === modelId ? { ...m, ...data } : m,
+							),
 						}
 					: l,
 			),
@@ -142,7 +165,9 @@ export default function StockPage() {
 				<InputNumber
 					min={0}
 					value={min}
-					onChange={(v) => updateModel(record.licenseId, record.id, { minStock: Number(v) })}
+					onChange={(v) =>
+						updateModel(record.licenseId, record.id, { minStock: Number(v) })
+					}
 				/>
 			),
 		},
@@ -196,7 +221,11 @@ export default function StockPage() {
 						onConfirm={() => deleteModel(record.licenseId, record.id)}
 					>
 						<IconButton>
-							<Iconify icon="mingcute:delete-2-fill" size={18} className="text-error" />
+							<Iconify
+								icon="mingcute:delete-2-fill"
+								size={18}
+								className="text-error"
+							/>
 						</IconButton>
 					</Popconfirm>
 				</div>
@@ -230,7 +259,14 @@ export default function StockPage() {
 							...m,
 							licenseId: record.id,
 						}));
-						return <Table rowKey="id" columns={modelColumns} dataSource={data} pagination={false} />;
+						return (
+							<Table
+								rowKey="id"
+								columns={modelColumns}
+								dataSource={data}
+								pagination={false}
+							/>
+						);
 					},
 					onExpand: (exp, record) => {
 						if (exp) loadProducts(record.id);
