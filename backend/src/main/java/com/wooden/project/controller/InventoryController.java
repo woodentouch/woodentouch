@@ -52,6 +52,19 @@ public class InventoryController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/products")
+    public List<ProductDTO> getAllProducts() {
+        List<Stock> stocks = stockRepository.findAll();
+        return stocks.stream()
+                .map(s -> new ProductDTO(
+                        s.getId_produit().getId_produit(),
+                        s.getId_produit().getModele(),
+                        s.getQuantite(),
+                        s.getStockMinimum()
+                ))
+                .collect(Collectors.toList());
+    }
+
     public static class AddProductRequest {
         public Long licenseId;
         public String model;
