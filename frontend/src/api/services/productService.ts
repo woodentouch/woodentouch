@@ -1,11 +1,11 @@
 import apiClient from "../apiClient";
 
 export interface Product {
-	id: number;
-	model: string;
-	size?: string;
-	quantity: number;
-	stockMinimum: number;
+        id: number;
+        model: string;
+        size: string;
+        quantity: number;
+        stockMinimum: number;
 }
 
 // Endpoints shouldn't start with /api because axios baseURL already uses it.

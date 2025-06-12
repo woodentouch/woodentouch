@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ProductDTO {
     private Long id;
     private String model;
+    private String size;
     private int quantity;
     private int stockMinimum;
 }

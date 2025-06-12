@@ -48,6 +48,7 @@ public class InventoryController {
                 .map(s -> new ProductDTO(
                         s.getId_produit().getId_produit(),
                         s.getId_produit().getModele(),
+                        s.getId_produit().getTaille().name(),
                         s.getQuantite(),
                         s.getStockMinimum() != null ? s.getStockMinimum() : 0
                 ))
@@ -62,6 +63,7 @@ public class InventoryController {
                 .map(s -> new ProductDTO(
                         s.getId_produit().getId_produit(),
                         s.getId_produit().getModele(),
+                        s.getId_produit().getTaille().name(),
                         s.getQuantite(),
                         s.getStockMinimum() != null ? s.getStockMinimum() : 0
                 ))

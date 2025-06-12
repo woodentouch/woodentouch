@@ -4,51 +4,70 @@ import type { ColumnsType } from "antd/es/table";
 
 import { IconButton, Iconify } from "@/components/icon";
 import type { License, Model } from "@/_mock/stock";
+import type { Product } from "@/api/services/productService";
 import licenseService from "@/api/services/licenseService";
 import productService from "@/api/services/productService";
 import ModelModal, { type ModelModalProps } from "./model-modal";
 import LicenseModal, { type LicenseModalProps } from "./license-modal";
 
 interface ModelRow extends Model {
-	licenseId: string;
+        licenseId: string;
+        variants: Product[];
 }
 
 export default function StockPage() {
-	const [licenses, setLicenses] = useState<License[]>([]);
+        const [licenses, setLicenses] = useState<License[]>([]);
+        const [expandedLicenses, setExpandedLicenses] = useState<string[]>([]);
 
-	const fetchLicenses = async () => {
-		try {
-			const data = await licenseService.getLicenses();
-			setLicenses(data.map((l) => ({ id: String(l.id), name: l.name, models: [] })));
-		} catch (e) {
-			alert("Failed to load licenses");
-		}
-	};
+        const fetchLicenses = async () => {
+                try {
+                        const data = await licenseService.getLicenses();
+                        setLicenses(
+                                data.map((l: any) => ({
+                                        id: String(l.id ?? l.id_license),
+                                        name: l.name ?? l.name_license,
+                                        models: [],
+                                })),
+                        );
+                } catch (e) {
+                        alert("Failed to load licenses");
+                }
+        };
 
        const loadProducts = async (licenseId?: string) => {
                 try {
                         const products = await productService.getProducts(
                                 licenseId ? Number(licenseId) : undefined,
                         );
-			setLicenses((prev) =>
-				prev.map((l) =>
-					l.id === licenseId
-						? {
-								...l,
-								models: products.map((p) => ({
-									id: String(p.id),
-									name: p.model,
-									quantity: p.quantity,
-									minStock: p.stockMinimum,
-								})),
-							}
-						: l,
-				),
-			);
-		} catch (e) {
-			alert("Failed to load products");
-		}
-	};
+                        const grouped = new Map<string, ModelRow>();
+                        products.forEach((p) => {
+                                const key = p.model;
+                                const existing = grouped.get(key);
+                                if (existing) {
+                                        existing.quantity += p.quantity;
+                                        existing.variants.push(p);
+                                } else {
+                                        grouped.set(key, {
+                                                id: String(p.id),
+                                                name: p.model,
+                                                quantity: p.quantity,
+                                                minStock: p.stockMinimum,
+                                                licenseId: licenseId ?? "",
+                                                variants: [p],
+                                        });
+                                }
+                        });
+                        setLicenses((prev) =>
+                                prev.map((l) =>
+                                        l.id === licenseId
+                                                ? { ...l, models: Array.from(grouped.values()) }
+                                                : l,
+                                ),
+                        );
+                } catch (e) {
+                        alert("Failed to load products");
+                }
+        };
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
 	useEffect(() => {
@@ -128,31 +147,28 @@ export default function StockPage() {
 		);
 	};
 
-	const modelColumns: ColumnsType<ModelRow> = [
-		{
-			title: "Name",
-			dataIndex: "name",
-		},
-		{
-			title: "Quantité",
-			dataIndex: "quantity",
-		},
-		{
-			title: "Stock Minimum",
-			dataIndex: "minStock",
-			render: (min, record) => (
-				<InputNumber
-					min={0}
-					value={min}
-					onChange={(v) => updateModel(record.licenseId, record.id, { minStock: Number(v) })}
-				/>
-			),
-		},
-		{
-			title: "Status",
-			dataIndex: "quantity",
-			render: (_, record) => {
-				let color = "success";
+        const modelColumns: ColumnsType<ModelRow> = [
+                {
+                        title: "Modèle",
+                        dataIndex: "name",
+                        render: (name: string, record) => `${name} (${record.quantity})`,
+                },
+                {
+                        title: "Stock Minimum",
+                        dataIndex: "minStock",
+                        render: (min, record) => (
+                                <InputNumber
+                                        min={0}
+                                        value={min}
+                                        onChange={(v) => updateModel(record.licenseId, record.id, { minStock: Number(v) })}
+                                />
+                        ),
+                },
+                {
+                        title: "Status",
+                        dataIndex: "quantity",
+                        render: (_, record) => {
+                                let color = "success";
 				let text = "Satisfaisant";
 				if (record.quantity === 0) {
 					color = "error";
@@ -203,8 +219,16 @@ export default function StockPage() {
 					</Popconfirm>
 				</div>
 			),
-		},
-	];
+                },
+        ];
+
+        const variantColumns: ColumnsType<Product> = [
+                {
+                        title: "Taille",
+                        dataIndex: "size",
+                },
+                { title: "Quantité", dataIndex: "quantity" },
+        ];
 
 	const licenseColumns: ColumnsType<License> = [
 		{
@@ -226,21 +250,42 @@ export default function StockPage() {
 			<Table
 				rowKey="id"
 				columns={licenseColumns}
-				expandable={{
-					expandedRowRender: (record) => {
-						const data: ModelRow[] = record.models.map((m) => ({
-							...m,
-							licenseId: record.id,
-						}));
-						return <Table rowKey="id" columns={modelColumns} dataSource={data} pagination={false} />;
-					},
-					onExpand: (exp, record) => {
-						if (exp) loadProducts(record.id);
-					},
-				}}
-				dataSource={licenses}
-				pagination={false}
-			/>
+                                expandable={{
+                                        expandedRowKeys: expandedLicenses,
+                                        onExpand: (exp, record) => {
+                                                setExpandedLicenses((keys) =>
+                                                        exp ? [...keys, record.id] : keys.filter((k) => k !== record.id),
+                                                );
+                                                if (exp) loadProducts(record.id);
+                                        },
+                                        expandedRowRender: (record) => {
+                                                const data: ModelRow[] = record.models.map((m) => ({
+                                                        ...m,
+                                                        licenseId: record.id,
+                                                }));
+                                                return (
+                                                        <Table
+                                                                rowKey="id"
+                                                                columns={modelColumns}
+                                                                dataSource={data}
+                                                                pagination={false}
+                                                                expandable={{
+                                                                        expandedRowRender: (m) => (
+                                                                                <Table
+                                                                                        rowKey="size"
+                                                                                        columns={variantColumns}
+                                                                                        dataSource={m.variants}
+                                                                                        pagination={false}
+                                                                                />
+                                                                        ),
+                                                                }}
+                                                        />
+                                                );
+                                        },
+                                }}
+                                dataSource={licenses}
+                                pagination={false}
+                        />
 			<ModelModal {...modelModalProps} licenses={licenses} />
 			<LicenseModal {...licenseModalProps} />
 		</Card>
