@@ -1,8 +1,8 @@
 FROM node:22-alpine AS build-stage
 WORKDIR /app
 ENV NODE_OPTIONS=--max_old_space_size=8192
+ENV CI=true
 
-# Installer les dépendances système nécessaires + git
 RUN apk add --no-cache python3 make g++ git
 
 COPY package.json package-lock.json ./
