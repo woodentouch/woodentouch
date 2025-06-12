@@ -41,3 +41,6 @@ Backend also uses the `PORT` variable set by Railway. Frontend requires `VITE_AP
 ### 4. Deploy
 
 Trigger a deployment for each service. Railway will build the Docker images and start your application. Once the backend is running you can seed the database with your own data.
+
+## SumUp Integration
+The backend can periodically sync products and categories from SumUp. Provide your access token via the `SUMUP_TOKEN` environment variable.
