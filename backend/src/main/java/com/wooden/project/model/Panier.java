@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import com.wooden.project.model.User;
 import com.wooden.project.model.evenement;
@@ -28,6 +29,7 @@ public class Panier {
     private Long id_panier;
 
     @OneToMany(mappedBy = "panier", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<PanierItem> items;
 
     @ManyToOne
