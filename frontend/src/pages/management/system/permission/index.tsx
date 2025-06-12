@@ -25,9 +25,11 @@ export default function StockPage() {
 		}
 	};
 
-	const loadProducts = async (licenseId: string) => {
-		try {
-			const products = await productService.getProducts(Number(licenseId));
+       const loadProducts = async (licenseId?: string) => {
+                try {
+                        const products = await productService.getProducts(
+                                licenseId ? Number(licenseId) : undefined,
+                        );
 			setLicenses((prev) =>
 				prev.map((l) =>
 					l.id === licenseId

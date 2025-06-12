@@ -9,11 +9,15 @@ export interface Product {
 }
 
 // Endpoints shouldn't start with /api because axios baseURL already uses it.
-// licenseId is optional; if undefined, the backend should return all products
-// instead of filtering by license. This prevents URLs like `/products/[object Object]`.
+// `licenseId` is optional; when omitted or invalid the backend should return all
+// products. Use a query parameter instead of a dynamic segment so we can simply
+// drop the parameter when no licence is selected.
 const getProducts = (licenseId?: number) => {
-       const url = licenseId !== undefined ? `/products/${licenseId}` : "/products";
-       return apiClient.get<Product[]>({ url });
+       const params: Record<string, number> = {};
+       if (typeof licenseId === "number" && !Number.isNaN(licenseId)) {
+               params.licenseId = licenseId;
+       }
+       return apiClient.get<Product[]>({ url: "/products", params });
 };
 
 const addProduct = (data: {
