@@ -2,7 +2,6 @@ package com.wooden.project.controller;
 
 import com.wooden.project.model.evenement;
 import com.wooden.project.service.EventService;
-import com.wooden.project.service.EventService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,38 +10,38 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/evenements")
-public class evenementController {
+public class EvenementController {
 
-    private final EventService EventService;
+    private final EventService eventService;
 
-    public evenementController(EventService EventService) {
-        this.EventService = EventService;
+    public EvenementController(EventService eventService) {
+        this.eventService = eventService;
     }
 
     // Get all evenements
     @GetMapping
     public List<evenement> getAllEvenements() {
-        return EventService.findAll();
+        return eventService.findAll();
     }
 
     // Get a single evenement by ID
     @GetMapping("/{id}")
     public ResponseEntity<evenement> getEvenementById(@PathVariable Long id) {
-        Optional<evenement> evenement = EventService.findById(id);
+        Optional<evenement> evenement = eventService.findById(id);
         return evenement.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     // Create a new evenement
     @PostMapping
     public evenement createEvenement(@RequestBody evenement evenement) {
-        return EventService.save(evenement);
+        return eventService.save(evenement);
     }
 
 
     // Delete an evenement
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEvenement(@PathVariable Long id) {
-        EventService.deleteById(id);
+        eventService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 }
