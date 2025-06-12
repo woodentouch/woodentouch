@@ -1,4 +1,5 @@
 import apiClient from "../apiClient";
+import type { BestSellerDTO, LicenseStatDTO } from "#/stats";
 
 export enum StatsApi {
 	WeeklySales = "/stats/getWeeklySales",

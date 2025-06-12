@@ -14,10 +14,15 @@ import ChartRadar from "./view/chart-radar";
 import ChartRadial from "./view/chart-radial";
 
 export default function ChartPage() {
-	return (
-		<>
-			<Typography.Link
-				href="https://apexcharts.com"
+        const barSeries = [40, 60, 80, 20];
+        const barCategories = ["A", "B", "C", "D"];
+        const pieSeries = [44, 55, 13, 43];
+        const pieLabels = ["Apple", "Mango", "Orange", "Watermelon"];
+
+        return (
+                <>
+                        <Typography.Link
+                                href="https://apexcharts.com"
 				style={{ color: themeVars.colors.palette.primary.default }}
 				className="mb-4 block"
 			>
@@ -58,22 +63,22 @@ export default function ChartPage() {
 					</Card>
 				</Col>
 
-				<Col span={23} lg={12}>
-					<Card title="Bar">
-						<ChartBar />
-					</Card>
-				</Col>
+                                <Col span={23} lg={12}>
+                                        <Card title="Bar">
+                                                <ChartBar series={barSeries} categories={barCategories} />
+                                        </Card>
+                                </Col>
 				<Col span={23} lg={12}>
 					<Card title="Column Mixed">
 						<ChartMixed />
 					</Card>
 				</Col>
 
-				<Col span={24} lg={12}>
-					<Card title="Pie">
-						<ChartPie />
-					</Card>
-				</Col>
+                                <Col span={24} lg={12}>
+                                        <Card title="Pie">
+                                                <ChartPie series={pieSeries} labels={pieLabels} />
+                                        </Card>
+                                </Col>
 				<Col span={23} lg={12}>
 					<Card title="Donut">
 						<ChartDonut />
