@@ -150,20 +150,20 @@ const MANAGEMENT_PERMISSION = {
 				{
 					id: "1985890042972842",
 					parentId: "0249937641030250",
-					label: "sys.menu.system.organization",
-					name: "Organization",
+					label: "sys.menu.system.caisse",
+					name: "Sales",
 					type: PermissionType.MENU,
-					route: "organization",
-					component: "/management/system/organization/index.tsx",
+					route: "caisse",
+					component: "/management/caisse/index.tsx",
 				},
 				{
 					id: "4359580910369984",
 					parentId: "0249937641030250",
-					label: "sys.menu.system.permission",
-					name: "Permission",
+					label: "sys.menu.system.stock",
+					name: "Stock",
 					type: PermissionType.MENU,
-					route: "permission",
-					component: "/management/system/permission/index.tsx",
+					route: "stock",
+					component: "/management/system/stock/index.tsx",
 				},
 				{
 					id: "1689241785490759",
@@ -371,7 +371,8 @@ const MENU_LEVEL_PERMISSION = {
 							name: "Menu Level 3a",
 							type: PermissionType.MENU,
 							route: "menu-level-3a",
-							component: "/menu-level/menu-level-1b/menu-level-2b/menu-level-3a/index.tsx",
+							component:
+								"/menu-level/menu-level-1b/menu-level-2b/menu-level-3a/index.tsx",
 						},
 						{
 							id: "3298034742548454",
@@ -380,7 +381,8 @@ const MENU_LEVEL_PERMISSION = {
 							name: "Menu Level 3b",
 							type: PermissionType.MENU,
 							route: "menu-level-3b",
-							component: "/menu-level/menu-level-1b/menu-level-2b/menu-level-3b/index.tsx",
+							component:
+								"/menu-level/menu-level-1b/menu-level-2b/menu-level-3b/index.tsx",
 						},
 					],
 				},
@@ -543,7 +545,11 @@ const TEST_ROLE = {
 	status: BasicStatus.ENABLE,
 	order: 2,
 	desc: "test",
-	permission: [DASHBOARD_PERMISSION, COMPONENTS_PERMISSION, FUNCTIONS_PERMISSION],
+	permission: [
+		DASHBOARD_PERMISSION,
+		COMPONENTS_PERMISSION,
+		FUNCTIONS_PERMISSION,
+	],
 };
 export const ROLE_LIST = [ADMIN_ROLE, TEST_ROLE];
 
@@ -588,7 +594,8 @@ if (import.meta.hot) {
 
 		if (!userInfo?.username) return;
 
-		const newUserInfo = userInfo.username === DEFAULT_USER.username ? DEFAULT_USER : TEST_USER;
+		const newUserInfo =
+			userInfo.username === DEFAULT_USER.username ? DEFAULT_USER : TEST_USER;
 
 		setUserInfo(newUserInfo);
 

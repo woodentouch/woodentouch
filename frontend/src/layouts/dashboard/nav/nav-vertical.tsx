@@ -3,7 +3,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useMatches, useNavigate } from "react-router";
 
 import Scrollbar from "@/components/scrollbar";
-import { useFlattenedRoutes, usePathname, usePermissionRoutes, useRouteToMenuFn } from "@/router/hooks";
+import {
+	useFlattenedRoutes,
+	usePathname,
+	usePermissionRoutes,
+	useRouteToMenuFn,
+} from "@/router/hooks";
 import { menuFilter } from "@/router/utils";
 import { useSettingActions, useSettings } from "@/store/settingStore";
 
@@ -12,7 +17,12 @@ import { NAV_WIDTH } from "../config";
 import NavLogo from "./nav-logo";
 
 import { ThemeLayout, ThemeMode } from "#/enum";
-import { BarChartOutlined, DashboardOutlined, SettingOutlined, UserOutlined } from "@ant-design/icons";
+import {
+	BarChartOutlined,
+	DashboardOutlined,
+	SettingOutlined,
+	UserOutlined,
+} from "@ant-design/icons";
 
 const { Sider } = Layout;
 
@@ -32,7 +42,10 @@ export default function NavVertical(props: Props) {
 	const permissionRoutes = usePermissionRoutes();
 	const flattenedRoutes = useFlattenedRoutes();
 
-	const collapsed = useMemo(() => themeLayout === ThemeLayout.Mini, [themeLayout]);
+	const collapsed = useMemo(
+		() => themeLayout === ThemeLayout.Mini,
+		[themeLayout],
+	);
 
 	/*const menuList = useMemo(() => {
 		const menuRoutes = menuFilter(permissionRoutes);
@@ -45,22 +58,21 @@ export default function NavVertical(props: Props) {
 			icon: <DashboardOutlined />,
 		},
 		{
-			key: "/management/system/organization",
+			key: "/management/system/caisse",
 			label: "Ventes",
 			icon: <UserOutlined />,
 		},
 		{
-			key: "/management/system/permission",
+			key: "/management/system/stock",
 			label: "Stock",
-			icon:<BarChartOutlined />,
+			icon: <BarChartOutlined />,
 		},
 		{
 			key: "/components/chart",
 			label: "Statistiques",
-			icon:<BarChartOutlined />,
+			icon: <BarChartOutlined />,
 		},
 	];
-	
 
 	const selectedKeys = useMemo(() => [pathname], [pathname]);
 
@@ -69,7 +81,9 @@ export default function NavVertical(props: Props) {
 	useEffect(() => {
 		if (!collapsed) {
 			const keys = matches
-				.filter((match) => match.pathname !== "/" && match.pathname !== pathname)
+				.filter(
+					(match) => match.pathname !== "/" && match.pathname !== pathname,
+				)
 				.map((match) => match.pathname);
 			setOpenKeys(keys);
 		}
@@ -117,11 +131,7 @@ export default function NavVertical(props: Props) {
 				<NavLogo collapsed={collapsed} onToggle={handleToggleCollapsed} />
 
 				<Scrollbar>
-					<Menu
-    					mode="inline"
-    					items={menuList}
-    					onClick={onClick}
-					/>
+					<Menu mode="inline" items={menuList} onClick={onClick} />
 				</Scrollbar>
 			</div>
 		</Sider>
