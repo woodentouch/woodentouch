@@ -1,6 +1,7 @@
 package com.wooden.project.controller;
 
 import com.wooden.project.dto.ProductDTO;
+import com.wooden.project.dto.Result;
 import com.wooden.project.model.Produit;
 import com.wooden.project.model.Stock;
 import com.wooden.project.model.Taille;
@@ -29,8 +30,9 @@ public class InventoryController {
     }
 
     @GetMapping("/licenses")
-    public List<licence> getLicenses() {
-        return licenceRepository.findAll();
+    public Result<List<licence>> getLicenses() {
+        List<licence> all = licenceRepository.findAll();
+        return Result.success(all);
     }
 
     @PostMapping("/addLicense")
@@ -40,9 +42,9 @@ public class InventoryController {
     }
 
     @GetMapping("/products/{licenseId}")
-    public List<ProductDTO> getProducts(@PathVariable Long licenseId) {
+    public Result<List<ProductDTO>> getProducts(@PathVariable Long licenseId) {
         List<Stock> stocks = stockRepository.findByLicenseId(licenseId);
-        return stocks.stream()
+        List<ProductDTO> products = stocks.stream()
                 .map(s -> new ProductDTO(
                         s.getId_produit().getId_produit(),
                         s.getId_produit().getModele(),
@@ -50,12 +52,13 @@ public class InventoryController {
                         s.getStockMinimum()
                 ))
                 .collect(Collectors.toList());
+        return Result.success(products);
     }
 
     @GetMapping("/products")
-    public List<ProductDTO> getAllProducts() {
+    public Result<List<ProductDTO>> getAllProducts() {
         List<Stock> stocks = stockRepository.findAll();
-        return stocks.stream()
+        List<ProductDTO> products = stocks.stream()
                 .map(s -> new ProductDTO(
                         s.getId_produit().getId_produit(),
                         s.getId_produit().getModele(),
@@ -63,6 +66,7 @@ public class InventoryController {
                         s.getStockMinimum()
                 ))
                 .collect(Collectors.toList());
+        return Result.success(products);
     }
 
     public static class AddProductRequest {
