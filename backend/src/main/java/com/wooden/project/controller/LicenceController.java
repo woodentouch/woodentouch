@@ -10,9 +10,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/licences")
-public class licenceController {
+public class LicenceController {
     private final LicenceService licenceService;
-    public licenceController (LicenceService licenceService) {
+
+    public LicenceController(LicenceService licenceService) {
         this.licenceService = licenceService;
     }
     @GetMapping
