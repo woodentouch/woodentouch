@@ -11,8 +11,11 @@ const ProfilePage = lazy(() => import("@/pages/management/user/profile"));
 const AccountPage = lazy(() => import("@/pages/management/user/account"));
 
 const Blog = lazy(() => import("@/pages/management/blog"));
-const CaissePage = lazy(() => import("@/pages/management/caisse"));
-const StockPage = lazy(() => import("@/pages/management/system/permission"));
+const OrganizationPage = lazy(() => import("@/pages/management/system/organization"));
+const PermissionPage = lazy(() => import("@/pages/management/system/permission"));
+const RolePage = lazy(() => import("@/pages/management/system/role"));
+const UserPage = lazy(() => import("@/pages/management/system/user"));
+const UserDetailPage = lazy(() => import("@/pages/management/system/user/detail"));
 
 // ✅ Section principale "Management" sans "Stock"
 const management: AppRouteObject = {
@@ -65,18 +68,42 @@ const management: AppRouteObject = {
                        children: [
                                {
                                        path: "organization",
-                                       element: <CaissePage />,
+                                       element: <OrganizationPage />,
                                        meta: {
-                                               label: "Caisse",
+                                               label: "Organization",
                                                key: "/management/system/organization",
                                        },
                                },
                                {
                                        path: "permission",
-                                       element: <StockPage />,
+                                       element: <PermissionPage />,
                                        meta: {
-                                               label: "Stock",
+                                               label: "Permission",
                                                key: "/management/system/permission",
+                                       },
+                               },
+                               {
+                                       path: "role",
+                                       element: <RolePage />,
+                                       meta: {
+                                               label: "Role",
+                                               key: "/management/system/role",
+                                       },
+                               },
+                               {
+                                       path: "user",
+                                       element: <UserPage />,
+                                       meta: {
+                                               label: "User",
+                                               key: "/management/system/user",
+                                       },
+                               },
+                               {
+                                       path: "user/:id",
+                                       element: <UserDetailPage />,
+                                       meta: {
+                                               label: "User Detail",
+                                               key: "/management/system/user_detail",
                                        },
                                },
                        ],
