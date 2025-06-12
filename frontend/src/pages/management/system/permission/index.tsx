@@ -24,13 +24,13 @@ export default function StockPage() {
                 try {
                         const data = await licenseService.getLicenses();
                         setLicenses(
-                                data.map((l: any) => ({
-                                        id: String(l.id ?? l.id_license),
-                                        name: l.name ?? l.name_license,
+                                data.map((l) => ({
+                                        id: String(l.id),
+                                        name: l.name,
                                         models: [],
                                 })),
                         );
-                } catch (e) {
+                } catch {
                         alert("Failed to load licenses");
                 }
         };
@@ -154,7 +154,10 @@ export default function StockPage() {
                 {
                         title: "Modèle",
                         dataIndex: "name",
-                        render: (name: string, record) => `${name} (${record.value.toFixed(2)}€)`,
+                        render: (name: string, record) => {
+                                const val = typeof record.value === "number" ? record.value : 0;
+                                return `${name} (${val.toFixed(2)}€)`;
+                        },
                 },
                 {
                         title: "Stock Minimum",
@@ -251,7 +254,7 @@ export default function StockPage() {
                 {
                         title: "Valeur",
                         dataIndex: "value",
-                        render: (v: number) => `${v.toFixed(2)}€`,
+                        render: (v: number = 0) => `${v.toFixed(2)}€`,
                 },
         ];
 
@@ -279,7 +282,9 @@ export default function StockPage() {
                                         expandedRowKeys: expandedLicenses,
                                         onExpand: (exp, record) => {
                                                 setExpandedLicenses((keys) =>
-                                                        exp ? [...keys, record.id] : keys.filter((k) => k !== record.id),
+                                                        exp
+                                                                ? Array.from(new Set([...keys, record.id]))
+                                                                : keys.filter((k) => k !== record.id),
                                                 );
                                                 if (exp) loadProducts(record.id);
                                         },
