@@ -26,10 +26,10 @@ const dashboard: AppRouteObject = {
 		hideMenu: true,
 	},
 	children: [
-		{
-			index: true,
-			element: <Navigate to="workbench" replace />,
-		},
+                {
+                        index: true,
+                        element: <Navigate to="analysis" replace />,
+                },
 		{
 			path: "workbench",
 			element: <HomePage />,
