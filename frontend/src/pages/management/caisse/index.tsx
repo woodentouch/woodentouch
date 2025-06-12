@@ -10,10 +10,11 @@ import {
 	Input,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { IconButton, Iconify } from "@/components/icon";
 import productService, { type Product } from "@/api/services/productService";
 import statsService from "@/api/services/statsService";
+import salesService from "@/api/services/salesService";
 import { useCartItems, useCartActions, type CartItem } from "@/store/cartStore";
 import { toast } from "sonner";
 
@@ -38,13 +39,25 @@ const LOCAL_PRODUCTS: Product[] = [
 ];
 
 export default function CaissePage() {
-	const { data: products } = useQuery({
-		queryKey: ["products"],
-		queryFn: () => productService.getProducts(),
-	});
+       const [search, setSearch] = useState("");
 
-	const productList =
-		Array.isArray(products) && products.length > 0 ? products : LOCAL_PRODUCTS;
+       const { data: products } = useQuery({
+               queryKey: ["products"],
+               queryFn: () => productService.getProducts(),
+       });
+
+       const { data: searchedProducts } = useQuery({
+               queryKey: ["searchProducts", search],
+               queryFn: () => productService.searchProducts(search),
+               enabled: search.length > 0,
+       });
+
+       const productList =
+               search.length > 0
+                       ? searchedProducts ?? []
+                       : Array.isArray(products) && products.length > 0
+                       ? products
+                       : LOCAL_PRODUCTS;
 
 	const { data: lastSales } = useQuery<unknown[]>({
 		queryKey: ["lastSales"],
@@ -55,12 +68,25 @@ export default function CaissePage() {
 
 	const items = useCartItems();
 	const { addItem, clear, updateQuantity, removeItem } = useCartActions();
-	const [modalOpen, setModalOpen] = useState(false);
-	const [search, setSearch] = useState("");
+       const [modalOpen, setModalOpen] = useState(false);
 	const [amountModal, setAmountModal] = useState(false);
-	const [discountModal, setDiscountModal] = useState(false);
-	const [amountValue, setAmountValue] = useState(0);
-	const [discountValue, setDiscountValue] = useState(1);
+        const [discountModal, setDiscountModal] = useState(false);
+        const [amountValue, setAmountValue] = useState(0);
+        const [discountValue, setDiscountValue] = useState(1);
+
+        const queryClient = useQueryClient();
+        const checkoutMutation = useMutation({
+                mutationFn: salesService.createSale,
+                onSuccess: () => {
+                        toast.success("Vente enregistrée");
+                        clear();
+                        queryClient.invalidateQueries(["lastSales"]);
+                        queryClient.invalidateQueries(["latest-sales"]);
+                },
+                onError: () => {
+                        toast.error("Erreur lors de l'enregistrement");
+                },
+        });
 
 	const columns: ColumnsType<CartItem> = [
 		{ title: "Article", dataIndex: "name" },
@@ -124,21 +150,35 @@ export default function CaissePage() {
 		setAmountValue(0);
 	};
 
-	const onAddDiscount = () => {
-		if (discountValue > 0) {
-			addItem({
-				idProduit: -2,
-				name: "Réduction",
-				variante: "",
-				unitPrice: -discountValue,
-				quantity: 1,
-			});
-		}
-		setDiscountModal(false);
-		setDiscountValue(1);
-	};
+        const onAddDiscount = () => {
+                if (discountValue > 0) {
+                        addItem({
+                                idProduit: -2,
+                                name: "Réduction",
+                                variante: "",
+                                unitPrice: -discountValue,
+                                quantity: 1,
+                        });
+                }
+                setDiscountModal(false);
+                setDiscountValue(1);
+        };
 
-	const total = items.reduce((sum, it) => sum + it.unitPrice * it.quantity, 0);
+        const onCheckout = () => {
+                const payload = {
+                        mode_paiement: "CB",
+                        prix_panier: total,
+                        dateAjout: new Date().toISOString().slice(0, 10),
+                        items: items.map((it) => ({
+                                produit: { id_produit: it.idProduit },
+                                quantite: it.quantity,
+                                prix_unitaire: it.unitPrice,
+                        })),
+                };
+                checkoutMutation.mutate(payload);
+        };
+
+        const total = items.reduce((sum, it) => sum + it.unitPrice * it.quantity, 0);
 
 	return (
 		<Space direction="vertical" size="middle" className="w-full">
@@ -165,14 +205,15 @@ export default function CaissePage() {
 						<Button onClick={() => setAmountModal(true)}>+ Montant</Button>
 						<Button onClick={() => setDiscountModal(true)}>Réduction</Button>
 					</Space>
-					<Button
-						type="primary"
-						block
-						disabled={items.length === 0}
-						onClick={() => toast.success("Facturation en cours...")}
-					>
-						Facturer ({total}€)
-					</Button>
+                                        <Button
+                                                type="primary"
+                                                block
+                                                disabled={items.length === 0}
+                                                loading={checkoutMutation.isLoading}
+                                                onClick={onCheckout}
+                                        >
+                                                Facturer ({total}€)
+                                        </Button>
 				</Space>
 			</Card>
 			<Modal
@@ -187,11 +228,9 @@ export default function CaissePage() {
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 					/>
-					{productList
-						.filter((p) => p.model.toLowerCase().includes(search.toLowerCase()))
-						.map((p) => (
-							<Card key={p.id} className="w-full">
-								<Typography.Text>{p.model}</Typography.Text>
+                                       {productList.map((p) => (
+                                                        <Card key={p.id} className="w-full">
+                                                                <Typography.Text>{p.model}</Typography.Text>
 								<div className="mt-2 flex gap-2 flex-wrap">
 									{VARIANTS.map((v) => (
 										<Button key={v} onClick={() => onAddItem(p, v)}>

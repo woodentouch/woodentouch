@@ -23,13 +23,17 @@ const getProducts = (licenseId?: number) => {
 };
 
 const addProduct = (data: {
-	licenseId: number;
-	model: string;
-	quantity: number;
-	stockMinimum: number;
+        licenseId: number;
+        model: string;
+        quantity: number;
+        stockMinimum: number;
 }) => apiClient.post<void>({ url: "/addProduct", data });
 
+const searchProducts = (query: string) =>
+        apiClient.get<Product[]>({ url: "/products/search", params: { q: query } });
+
 export default {
-	getProducts,
-	addProduct,
+        getProducts,
+        addProduct,
+        searchProducts,
 };

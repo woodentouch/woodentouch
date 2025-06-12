@@ -70,6 +70,27 @@ public class InventoryController {
         return Result.success(products);
     }
 
+    @GetMapping("/products/search")
+    public Result<List<ProductDTO>> searchProducts(@RequestParam("q") String query) {
+        List<Stock> stocks = stockRepository.searchByProductName(query);
+        List<ProductDTO> products = stocks.stream()
+                .map(s -> {
+                    Double avg = panierItemRepository.getAveragePriceByProductId(s.getId_produit().getId_produit());
+                    double value = (avg != null ? avg : 0) * s.getQuantite();
+                    return new ProductDTO(
+                            s.getId_produit().getLicence_id().getId_license(),
+                            s.getId_produit().getId_produit(),
+                            s.getId_produit().getModele(),
+                            s.getId_produit().getTaille().name(),
+                            s.getQuantite(),
+                            s.getStockMinimum() != null ? s.getStockMinimum() : 0,
+                            value
+                    );
+                })
+                .collect(Collectors.toList());
+        return Result.success(products);
+    }
+
     public static class AddProductRequest {
         public Long licenseId;
         public String model;
