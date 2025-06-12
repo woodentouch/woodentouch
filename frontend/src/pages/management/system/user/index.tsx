@@ -10,7 +10,7 @@ import { BasicStatus } from "#/enum";
 
 const USERS: UserInfo[] = USER_LIST as UserInfo[];
 
-export default function RolePage() {
+export default function UserPage() {
 	const { push } = useRouter();
 	const pathname = usePathname();
 
@@ -22,10 +22,16 @@ export default function RolePage() {
 			render: (_, record) => {
 				return (
 					<div className="flex">
-						<img alt="" src={record.avatar} className="h-10 w-10 rounded-full" />
+						<img
+							alt=""
+							src={record.avatar}
+							className="h-10 w-10 rounded-full"
+						/>
 						<div className="ml-2 flex flex-col">
 							<span className="text-sm">{record.username}</span>
-							<span className="text-xs text-text-secondary">{record.email}</span>
+							<span className="text-xs text-text-secondary">
+								{record.email}
+							</span>
 						</div>
 					</div>
 				);
@@ -66,9 +72,18 @@ export default function RolePage() {
 					<IconButton onClick={() => {}}>
 						<Iconify icon="solar:pen-bold-duotone" size={18} />
 					</IconButton>
-					<Popconfirm title="Delete the User" okText="Yes" cancelText="No" placement="left">
+					<Popconfirm
+						title="Delete the User"
+						okText="Yes"
+						cancelText="No"
+						placement="left"
+					>
 						<IconButton>
-							<Iconify icon="mingcute:delete-2-fill" size={18} className="text-error" />
+							<Iconify
+								icon="mingcute:delete-2-fill"
+								size={18}
+								className="text-error"
+							/>
 						</IconButton>
 					</Popconfirm>
 				</div>
