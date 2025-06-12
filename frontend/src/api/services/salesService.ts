@@ -18,6 +18,10 @@ class SalesService {
     getLatestSales() {
         return apiClient.get<SalesData[]>({ url: '/paniers/latest-sales' });
     }
+
+    createSale(data: unknown) {
+        return apiClient.post<void>({ url: '/paniers', data });
+    }
 }
 
 const salesService = new SalesService();
