@@ -24,8 +24,8 @@ public class Produit {
     private licence licence_id;
 
 
-    @Enumerated(EnumType.STRING)
-    private Taille taille;    
+    @Convert(converter = Taille.TailleConverter.class)
+    private Taille taille;
     
     private String modele;
 
