@@ -1,14 +1,23 @@
 import apiClient from "../apiClient";
 
-export enum ProductApi {
-	Products = "/produits",
-}
-
 export interface Product {
-	id_produit: number;
-	modele: string;
+	id: number;
+	model: string;
+	size?: string;
+	quantity: number;
+	stockMinimum: number;
 }
 
-const getProducts = () => apiClient.get<Product[]>({ url: ProductApi.Products });
+const getProducts = (licenseId: number) => apiClient.get<Product[]>({ url: `/api/products/${licenseId}` });
 
-export default { getProducts };
+const addProduct = (data: {
+	licenseId: number;
+	model: string;
+	quantity: number;
+	stockMinimum: number;
+}) => apiClient.post<void>({ url: "/api/addProduct", data });
+
+export default {
+	getProducts,
+	addProduct,
+};
