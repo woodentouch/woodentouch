@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Card, Dropdown, Menu, Popconfirm, Tag, InputNumber, Table, Collapse } from "antd";
+import { Button, Card, Dropdown, Menu, Popconfirm, Tag, Table, Collapse } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 import { IconButton, Iconify } from "@/components/icon";
@@ -9,11 +9,17 @@ import licenseService from "@/api/services/licenseService";
 import productService from "@/api/services/productService";
 import ModelModal, { type ModelModalProps } from "./model-modal";
 import LicenseModal, { type LicenseModalProps } from "./license-modal";
+import VariantModal, { type VariantModalProps } from "./variant-modal";
 
 interface ModelRow extends Model {
         licenseId: string;
-        variants: Product[];
+        variants: Variant[];
         value: number;
+}
+
+interface Variant extends Product {
+        licenseId: string;
+        modelId: string;
 }
 
 export default function StockPage() {
@@ -43,22 +49,26 @@ export default function StockPage() {
                         const grouped = new Map<string, ModelRow>();
                         products.forEach((p) => {
                                 const key = p.model;
-                                const existing = grouped.get(key);
-                                if (existing) {
-                                        existing.quantity += p.quantity;
-                                        existing.value += p.value;
-                                        existing.variants.push(p);
-                                } else {
-                                        grouped.set(key, {
+                                let model = grouped.get(key);
+                                if (!model) {
+                                        model = {
                                                 id: String(p.id),
                                                 name: p.model,
-                                                quantity: p.quantity,
+                                                quantity: 0,
                                                 minStock: p.stockMinimum,
                                                 licenseId: licenseId ?? "",
-                                                variants: [p],
-                                                value: p.value,
-                                        });
+                                                variants: [],
+                                                value: 0,
+                                        };
+                                        grouped.set(key, model);
                                 }
+                                model.quantity += p.quantity;
+                                model.value += p.value;
+                                model.variants.push({
+                                        ...p,
+                                        licenseId: licenseId ?? "",
+                                        modelId: model.id,
+                                });
                         });
                         setLicenses((prev) =>
                                 prev.map((l) =>
@@ -70,7 +80,7 @@ export default function StockPage() {
                 } catch (e) {
                         alert("Failed to load products");
                 }
-        };
+       };
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: run once on mount
 	useEffect(() => {
@@ -99,21 +109,29 @@ export default function StockPage() {
 		},
 		onCancel: () => setModelModalProps((p) => ({ ...p, show: false })),
 	});
-	const [licenseModalProps, setLicenseModalProps] = useState<LicenseModalProps>({
-		formValue: {},
-		title: "New Licence",
-		show: false,
-		onOk: async (data) => {
-			try {
-				await licenseService.addLicense(data.name ?? "");
-				await fetchLicenses();
-				setLicenseModalProps((p) => ({ ...p, show: false }));
-			} catch (e) {
-				alert("Failed to add license");
-			}
-		},
-		onCancel: () => setLicenseModalProps((p) => ({ ...p, show: false })),
-	});
+        const [licenseModalProps, setLicenseModalProps] = useState<LicenseModalProps>({
+                formValue: {},
+                title: "New Licence",
+                show: false,
+                onOk: async (data) => {
+                        try {
+                                await licenseService.addLicense(data.name ?? "");
+                                await fetchLicenses();
+                                setLicenseModalProps((p) => ({ ...p, show: false }));
+                        } catch (e) {
+                                alert("Failed to add license");
+                        }
+                },
+                onCancel: () => setLicenseModalProps((p) => ({ ...p, show: false })),
+        });
+
+        const [variantModalProps, setVariantModalProps] = useState<VariantModalProps>({
+                formValue: {},
+                title: "Edit Variant",
+                show: false,
+                onOk: () => {},
+                onCancel: () => setVariantModalProps((p) => ({ ...p, show: false })),
+        });
 
 	const openNewMenu = (
 		<Menu
@@ -131,24 +149,51 @@ export default function StockPage() {
 		/>
 	);
 
-	const deleteModel = (licenseId: string, modelId: string) => {
-		setLicenses((prev) =>
-			prev.map((l) => (l.id === licenseId ? { ...l, models: l.models.filter((m) => m.id !== modelId) } : l)),
-		);
-	};
+        const deleteModel = (licenseId: string, modelId: string) => {
+                setLicenses((prev) =>
+                        prev.map((l) => (l.id === licenseId ? { ...l, models: l.models.filter((m) => m.id !== modelId) } : l)),
+                );
+        };
 
-	const updateModel = (licenseId: string, modelId: string, data: Partial<Model>) => {
-		setLicenses((prev) =>
-			prev.map((l) =>
-				l.id === licenseId
-					? {
-							...l,
-							models: l.models.map((m) => (m.id === modelId ? { ...m, ...data } : m)),
-						}
-					: l,
-			),
-		);
-	};
+        const updateModel = (licenseId: string, modelId: string, data: Partial<Model>) => {
+                setLicenses((prev) =>
+                        prev.map((l) =>
+                                l.id === licenseId
+                                        ? {
+                                                        ...l,
+                                                        models: l.models.map((m) => (m.id === modelId ? { ...m, ...data } : m)),
+                                                }
+                                        : l,
+                        ),
+                );
+        };
+
+        const updateLicense = (licenseId: string, name: string) => {
+                setLicenses((prev) => prev.map((l) => (l.id === licenseId ? { ...l, name } : l)));
+        };
+
+        const updateVariant = (
+                licenseId: string,
+                modelId: string,
+                size: string,
+                data: Partial<Product>,
+        ) => {
+                setLicenses((prev) =>
+                        prev.map((l) => {
+                                if (l.id !== licenseId) return l;
+                                const models = l.models.map((m) => {
+                                        if (m.id !== modelId) return m;
+                                        const variants = m.variants.map((v) =>
+                                                v.size === size ? { ...v, ...data } : v,
+                                        );
+                                        const quantity = variants.reduce((sum, v) => sum + (v.quantity || 0), 0);
+                                        const value = variants.reduce((sum, v) => sum + (v.value || 0), 0);
+                                        return { ...m, variants, quantity, value };
+                                });
+                                return { ...l, models };
+                        }),
+                );
+        };
 
         const modelColumns: ColumnsType<ModelRow> = [
                 {
@@ -159,17 +204,7 @@ export default function StockPage() {
                                 return `${name} (${val.toFixed(2)}€)`;
                         },
                 },
-                {
-                        title: "Stock Minimum",
-                        dataIndex: "minStock",
-                        render: (min, record) => (
-                                <InputNumber
-                                        min={0}
-                                        value={min}
-                                        onChange={(v) => updateModel(record.licenseId, record.id, { minStock: Number(v) })}
-                                />
-                        ),
-                },
+                { title: "Stock Minimum", dataIndex: "minStock" },
                 {
                         title: "Status",
                         dataIndex: "quantity",
@@ -228,7 +263,7 @@ export default function StockPage() {
                 },
         ];
 
-        const variantColumns: ColumnsType<Product> = [
+        const variantColumns: ColumnsType<Variant> = [
                 {
                         title: "Taille",
                         dataIndex: "size",
@@ -256,15 +291,66 @@ export default function StockPage() {
                         dataIndex: "value",
                         render: (v: number = 0) => `${v.toFixed(2)}€`,
                 },
+                {
+                        title: "Action",
+                        key: "action",
+                        align: "center",
+                        render: (_, record) => (
+                                <IconButton
+                                        onClick={() =>
+                                                setVariantModalProps({
+                                                        ...variantModalProps,
+                                                        show: true,
+                                                        title: "Edit Variant",
+                                                        formValue: record,
+                                                        onOk: (data) => {
+                                                                updateVariant(
+                                                                        record.licenseId!,
+                                                                        record.modelId!,
+                                                                        record.size,
+                                                                        data,
+                                                                );
+                                                                setVariantModalProps((p) => ({ ...p, show: false }));
+                                                        },
+                                                })
+                                        }
+                                >
+                                        <Iconify icon="solar:pen-bold-duotone" size={18} />
+                                </IconButton>
+                        ),
+                },
         ];
 
-	const licenseColumns: ColumnsType<License> = [
-		{
-			title: "Licence",
-			dataIndex: "name",
-			render: (name) => <Tag color="processing">{name}</Tag>,
-		},
-	];
+        const licenseColumns: ColumnsType<License> = [
+                {
+                        title: "Licence",
+                        dataIndex: "name",
+                        render: (name) => <Tag color="processing">{name}</Tag>,
+                },
+                {
+                        title: "Action",
+                        key: "action",
+                        align: "center",
+                        render: (_, record) => (
+                                <IconButton
+                                        onClick={() =>
+                                                setLicenseModalProps({
+                                                        ...licenseModalProps,
+                                                        show: true,
+                                                        title: "Edit Licence",
+                                                        formValue: { ...record },
+                                                        onOk: (data) => {
+                                                                updateLicense(record.id, data.name ?? record.name);
+                                                                setLicenseModalProps((p) => ({ ...p, show: false }));
+                                                        },
+                                                })
+                                        }
+                                >
+                                        <Iconify icon="solar:pen-bold-duotone" size={18} />
+                                </IconButton>
+                        ),
+                },
+        ];
 
 	return (
 		<Card
@@ -302,17 +388,8 @@ export default function StockPage() {
                                                         }
                                                         const header = (
                                                                 <div className="flex items-center justify-between">
-                                                                        <span>{`${m.name} (${val.toFixed(2)}€)`}</span>
+                                                                        <Tag color="processing">{`${m.name} (${val.toFixed(2)}€)`}</Tag>
                                                                         <div className="flex items-center gap-2">
-                                                                                <InputNumber
-                                                                                        min={0}
-                                                                                        value={m.minStock}
-                                                                                        onChange={(v) =>
-                                                                                                updateModel(record.id, m.id, {
-                                                                                                        minStock: Number(v),
-                                                                                                })
-                                                                                        }
-                                                                                />
                                                                                 <Tag color={color}>{text}</Tag>
                                                                                 <IconButton
                                                                                         onClick={() =>
@@ -367,8 +444,9 @@ export default function StockPage() {
                                 dataSource={licenses}
                                 pagination={false}
                         />
-			<ModelModal {...modelModalProps} licenses={licenses} />
-			<LicenseModal {...licenseModalProps} />
-		</Card>
-	);
+                        <ModelModal {...modelModalProps} licenses={licenses} />
+                        <LicenseModal {...licenseModalProps} />
+                        <VariantModal {...variantModalProps} />
+                </Card>
+        );
 }
