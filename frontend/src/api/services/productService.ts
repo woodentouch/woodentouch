@@ -8,14 +8,15 @@ export interface Product {
 	stockMinimum: number;
 }
 
-const getProducts = (licenseId: number) => apiClient.get<Product[]>({ url: `/api/products/${licenseId}` });
+const getProducts = (licenseId: number) =>
+        apiClient.get<Product[]>({ url: `/produits/${licenseId}` });
 
 const addProduct = (data: {
 	licenseId: number;
 	model: string;
 	quantity: number;
 	stockMinimum: number;
-}) => apiClient.post<void>({ url: "/api/addProduct", data });
+}) => apiClient.post<void>({ url: "/produits", data });
 
 export default {
 	getProducts,
