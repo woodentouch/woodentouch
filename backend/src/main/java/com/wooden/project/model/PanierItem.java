@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "panier_items")
@@ -17,6 +18,7 @@ public class PanierItem {
 
     @ManyToOne
     @JoinColumn(name = "id_panier", referencedColumnName = "id_panier")
+    @JsonBackReference
     private Panier panier;
 
     @ManyToOne
