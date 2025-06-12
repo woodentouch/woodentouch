@@ -25,17 +25,13 @@ const PRICE_MAP: Record<string, number> = {
        "XS offerte": 0,
 };
 
-const LOCAL_PRODUCTS: Product[] = [
-       { id: 0, model: "Dressrossa", licenseId: 0, size: "", quantity: 0, stockMinimum: 0, value: 0 },
-];
-
 export default function CaissePage() {
-       const { data: products } = useQuery({
-               queryKey: ["products"],
-               queryFn: () => productService.getProducts(),
-       });
+        const { data: products } = useQuery({
+                queryKey: ["products"],
+                queryFn: productService.getProducts,
+        });
 
-       const productList = Array.isArray(products) && products.length > 0 ? products : LOCAL_PRODUCTS;
+        const productList = Array.isArray(products) ? products : [];
 
         const { data: lastSales } = useQuery<any[]>({
                 queryKey: ["lastSales"],
@@ -45,7 +41,7 @@ export default function CaissePage() {
         const salesList = Array.isArray(lastSales) ? lastSales : [];
 
         const items = useCartItems();
-        const { addItem, clear, updateQuantity, removeItem } = useCartActions();
+        const { addItem, clear, updateQuantity } = useCartActions();
         const [modalOpen, setModalOpen] = useState(false);
         const [search, setSearch] = useState("");
         const [amountModal, setAmountModal] = useState(false);
@@ -53,38 +49,29 @@ export default function CaissePage() {
         const [amountValue, setAmountValue] = useState(0);
         const [discountValue, setDiscountValue] = useState(1);
 
-        const columns: ColumnsType<CartItem> = [
-                { title: "Article", dataIndex: "name" },
-                {
-                        title: "Qté",
-                        dataIndex: "quantity",
-                        width: 80,
-                        render: (q, _, index) => (
-                                <InputNumber min={1} value={q} onChange={(v) => updateQuantity(index as number, Number(v))} />
-                        ),
-                },
-                { title: "Prix", dataIndex: "unitPrice", width: 100, render: (p) => `${p}€` },
-                {
-                        title: "Total",
-                        dataIndex: "unitPrice",
-                        width: 100,
-                        render: (p, r) => `${r.quantity * r.unitPrice}€`,
-                },
-                {
-                        title: "",
-                        width: 50,
-                        render: (_, __, index) => (
-                                <IconButton onClick={() => removeItem(index)}>
-                                        <Iconify icon="ic:baseline-delete" />
-                                </IconButton>
-                        ),
-                },
-        ];
+	const columns: ColumnsType<CartItem> = [
+		{ title: "Article", dataIndex: "name" },
+		{
+			title: "Qté",
+			dataIndex: "quantity",
+			width: 80,
+			render: (q, _, index) => (
+				<InputNumber min={1} value={q} onChange={(v) => updateQuantity(index as number, Number(v))} />
+			),
+		},
+		{ title: "Prix", dataIndex: "unitPrice", width: 100, render: (p) => `${p}€` },
+		{
+			title: "Total",
+			dataIndex: "unitPrice",
+			width: 100,
+			render: (p, r) => `${r.quantity * r.unitPrice}€`,
+		},
+	];
 
         const onAddItem = (product: Product, variant: string) => {
-               addItem({
-                        idProduit: product.id,
-                        name: `${product.model} - ${variant}`,
+                addItem({
+                        idProduit: product.id_produit,
+                        name: `${product.modele} - ${variant}`,
                         variante: variant,
                         unitPrice: PRICE_MAP[variant],
                         quantity: 1,
@@ -124,6 +111,22 @@ export default function CaissePage() {
 
 	return (
 		<Space direction="vertical" size="middle" className="w-full">
+			<Card className="border-b flex justify-between">
+				<IconButton onClick={() => history.back()}>
+					<Iconify icon="mdi:close" />
+				</IconButton>
+				<div className="flex gap-2">
+					<IconButton>
+						<Iconify icon="mdi:tag-outline" />
+					</IconButton>
+					<IconButton onClick={clear}>
+						<Iconify icon="mdi:trash-can-outline" />
+					</IconButton>
+					<IconButton>
+						<Iconify icon="mdi:dots-horizontal" />
+					</IconButton>
+				</div>
+			</Card>
                         <Card>
                                 {items.length === 0 ? (
                                         <div className="text-center py-10">Ajouter un article ou un montant</div>
@@ -131,35 +134,30 @@ export default function CaissePage() {
                                         <Table rowKey="name" pagination={false} columns={columns} dataSource={items} />
                                 )}
                         </Card>
-                       <Card>
-                               <Space direction="vertical" size="middle" className="w-full">
-                                       <Space wrap>
-                                               <Button type="primary" onClick={() => setModalOpen(true)}>+ Article</Button>
-                                               <Button onClick={() => setAmountModal(true)}>+ Montant</Button>
-                                               <Button onClick={() => setDiscountModal(true)}>Réduction</Button>
-                                       </Space>
-                                       <Button
-                                               type="primary"
-                                               block
-                                               disabled={items.length === 0}
-                                               onClick={() => toast.success("Facturation en cours...")}
-                                       >
-                                               Facturer ({total}€)
-                                       </Button>
-                               </Space>
-                       </Card>
+                        <Card className="flex flex-col gap-2 md:flex-row md:justify-between md:items-center">
+                                <div className="flex gap-2">
+                                        <Button type="primary" onClick={() => setModalOpen(true)}>
+                                                + Article
+                                        </Button>
+                                        <Button onClick={() => setAmountModal(true)}>+ Montant</Button>
+                                        <Button onClick={() => setDiscountModal(true)}>Réduction</Button>
+                                </div>
+                                <Button type="primary" disabled={items.length === 0} onClick={() => toast.success("Facturation en cours...")}>
+                                        Facturer ({total}€)
+                                </Button>
+                        </Card>
                         <Modal open={modalOpen} onCancel={() => setModalOpen(false)} footer={null} title="Articles">
                                 <Space direction="vertical" className="w-full">
                                         <Input placeholder="Rechercher" value={search} onChange={(e) => setSearch(e.target.value)} />
                                         {productList
                                                 .filter((p) =>
-                                                        p.model
+                                                        p.modele
                                                                 .toLowerCase()
                                                                 .includes(search.toLowerCase()),
                                                 )
                                                 .map((p) => (
-                                                <Card key={p.id} className="w-full">
-                                                        <Typography.Text>{p.model}</Typography.Text>
+                                                <Card key={p.id_produit} className="w-full">
+                                                        <Typography.Text>{p.modele}</Typography.Text>
                                                         <div className="mt-2 flex gap-2 flex-wrap">
                                                                 {VARIANTS.map((v) => (
                                                                         <Button key={v} onClick={() => onAddItem(p, v)}>
