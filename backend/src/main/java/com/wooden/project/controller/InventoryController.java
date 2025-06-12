@@ -57,6 +57,7 @@ public class InventoryController {
                     Double avg = panierItemRepository.getAveragePriceByProductId(s.getId_produit().getId_produit());
                     double value = (avg != null ? avg : 0) * s.getQuantite();
                     return new ProductDTO(
+                            s.getId_produit().getLicence_id().getId_license(),
                             s.getId_produit().getId_produit(),
                             s.getId_produit().getModele(),
                             s.getId_produit().getTaille().name(),

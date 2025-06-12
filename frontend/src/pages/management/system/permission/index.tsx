@@ -42,37 +42,37 @@ export default function StockPage() {
         };
 
        const loadProducts = async (licenseId?: string) => {
-                try {
-                        const products = await productService.getProducts(
-                                licenseId ? Number(licenseId) : undefined,
-                        );
-                        const grouped = new Map<string, ModelRow>();
-                        products.forEach((p) => {
+               try {
+                       const products = await productService.getProducts(
+                               licenseId ? Number(licenseId) : undefined,
+                       );
+                       const grouped = new Map<string, ModelRow>();
+                       products.forEach((p) => {
                                 const key = p.model;
                                 let model = grouped.get(key);
                                 if (!model) {
-                                        model = {
-                                                id: String(p.id),
-                                                name: p.model,
-                                                quantity: 0,
-                                                minStock: p.stockMinimum,
-                                                licenseId: licenseId ?? "",
-                                                variants: [],
-                                                value: 0,
-                                        };
-                                        grouped.set(key, model);
-                                }
-                                model.quantity += p.quantity;
-                                model.value += p.value;
-                                model.variants.push({
-                                        ...p,
-                                        licenseId: licenseId ?? "",
-                                        modelId: model.id,
-                                });
+                                model = {
+                                        id: String(p.id),
+                                        name: p.model,
+                                        quantity: 0,
+                                        minStock: p.stockMinimum,
+                                        licenseId: String(p.licenseId),
+                                        variants: [],
+                                        value: 0,
+                                };
+                                grouped.set(key, model);
+                        }
+                        model.quantity += p.quantity;
+                        model.value += p.value;
+                        model.variants.push({
+                                ...p,
+                                licenseId: String(p.licenseId),
+                                modelId: model.id,
                         });
-                        setLicenses((prev) =>
-                                prev.map((l) =>
-                                        l.id === licenseId
+                });
+                setLicenses((prev) =>
+                        prev.map((l) =>
+                                l.id === licenseId
                                                 ? { ...l, models: Array.from(grouped.values()) }
                                                 : l,
                                 ),
@@ -86,12 +86,13 @@ export default function StockPage() {
 	useEffect(() => {
 		fetchLicenses();
 	}, []);
-	const [modelModalProps, setModelModalProps] = useState<ModelModalProps>({
-		licenses,
-		formValue: {},
-		title: "New Model",
-		show: false,
-		onOk: async (data) => {
+        const [modelModalProps, setModelModalProps] = useState<ModelModalProps>({
+                licenses,
+                formValue: {},
+                title: "New Model",
+                show: false,
+                isEdit: false,
+                onOk: async (data) => {
 			const { licenseId, name, quantity, minStock } = data;
 			if (!licenseId) return;
 			try {
@@ -137,14 +138,14 @@ export default function StockPage() {
 		<Menu
 			items={[
 				{ key: "lic", label: "Créer une nouvelle licence" },
-				{ key: "model", label: "Ajouter un modèle" },
+                                { key: "model", label: "Ajouter un modèle" },
 			]}
 			onClick={(info) => {
-				if (info.key === "lic") {
-					setLicenseModalProps((p) => ({ ...p, show: true }));
-				} else {
-					setModelModalProps((p) => ({ ...p, show: true, licenses }));
-				}
+                                if (info.key === "lic") {
+                                        setLicenseModalProps((p) => ({ ...p, show: true }));
+                                } else {
+                                        setModelModalProps((p) => ({ ...p, show: true, licenses, isEdit: false, formValue: {} }));
+                                }
 			}}
 		/>
 	);
@@ -155,17 +156,35 @@ export default function StockPage() {
                 );
         };
 
-        const updateModel = (licenseId: string, modelId: string, data: Partial<Model>) => {
-                setLicenses((prev) =>
-                        prev.map((l) =>
-                                l.id === licenseId
-                                        ? {
-                                                        ...l,
-                                                        models: l.models.map((m) => (m.id === modelId ? { ...m, ...data } : m)),
-                                                }
-                                        : l,
-                        ),
-                );
+        const updateModel = (
+                licenseId: string,
+                modelId: string,
+                data: Partial<Model> & { licenseId?: string },
+        ) => {
+                setLicenses((prev) => {
+                        let moved: Model | null = null;
+                        const updated = prev.map((l) => {
+                                if (l.id !== licenseId) return l;
+                                const models = l.models.map((m) => {
+                                        if (m.id !== modelId) return m;
+                                        const next = { ...m, ...data };
+                                        moved = next;
+                                        return next;
+                                });
+                                return { ...l, models };
+                        });
+
+                        if (data.licenseId && data.licenseId !== licenseId && moved) {
+                                return updated.map((l) =>
+                                        l.id === data.licenseId
+                                                ? { ...l, models: [...l.models, { ...moved, licenseId: data.licenseId }] }
+                                                : l.id === licenseId
+                                                  ? { ...l, models: l.models.filter((m) => m.id !== modelId) }
+                                                  : l,
+                                );
+                        }
+                        return updated;
+                });
         };
 
         const updateLicense = (licenseId: string, name: string) => {
@@ -183,9 +202,26 @@ export default function StockPage() {
                                 if (l.id !== licenseId) return l;
                                 const models = l.models.map((m) => {
                                         if (m.id !== modelId) return m;
-                                        const variants = m.variants.map((v) =>
-                                                v.size === size ? { ...v, ...data } : v,
-                                        );
+                                        let found = false;
+                                        const variants = m.variants.map((v) => {
+                                                if (v.size === size) {
+                                                        found = true;
+                                                        return { ...v, ...data };
+                                                }
+                                                return v;
+                                        });
+                                        if (!found) {
+                                                variants.push({
+                                                        id: Date.now(),
+                                                        model: m.name,
+                                                        size,
+                                                        quantity: data.quantity ?? 0,
+                                                        stockMinimum: data.stockMinimum ?? 0,
+                                                        value: data.value ?? 0,
+                                                        licenseId: Number(licenseId),
+                                                        modelId: m.id,
+                                                } as Variant);
+                                        }
                                         const quantity = variants.reduce((sum, v) => sum + (v.quantity || 0), 0);
                                         const value = variants.reduce((sum, v) => sum + (v.value || 0), 0);
                                         return { ...m, variants, quantity, value };
@@ -229,23 +265,26 @@ export default function StockPage() {
 				<div className="flex justify-end text-gray">
 					<IconButton
 						onClick={() =>
-							setModelModalProps({
-								...modelModalProps,
-								licenses,
-								show: true,
-								title: "Edit",
-								formValue: { ...record, licenseId: record.licenseId },
-								onOk: (data) => {
-									updateModel(record.licenseId, record.id, {
-										name: data.name ?? record.name,
-										quantity: data.quantity ?? record.quantity,
-										minStock: data.minStock ?? record.minStock,
-									});
-									setModelModalProps((p) => ({ ...p, show: false }));
-								},
-							})
-						}
-					>
+                                                        setModelModalProps({
+                                                                ...modelModalProps,
+                                                                licenses,
+                                                                show: true,
+                                                                isEdit: true,
+                                                                title: "Edit",
+                                                                formValue: { ...record, licenseId: record.licenseId },
+                                                                onOk: (data) => {
+                                                                        updateModel(record.licenseId, record.id, {
+                                                                                name: data.name ?? record.name,
+                                                                                licenseId: data.licenseId ?? record.licenseId,
+                                                                        });
+                                                                        if (data.newSize) {
+                                                                                updateVariant(record.licenseId, record.id, data.newSize, {} as Product);
+                                                                        }
+                                                                        setModelModalProps((p) => ({ ...p, show: false }));
+                                                                },
+                                                        })
+                                                }
+                                        >
 						<Iconify icon="solar:pen-bold-duotone" size={18} />
 					</IconButton>
 					<Popconfirm
@@ -325,29 +364,26 @@ export default function StockPage() {
                 {
                         title: "Licence",
                         dataIndex: "name",
-                        render: (name) => <Tag color="processing">{name}</Tag>,
-                },
-                {
-                        title: "Action",
-                        key: "action",
-                        align: "center",
                         render: (_, record) => (
-                                <IconButton
-                                        onClick={() =>
-                                                setLicenseModalProps({
-                                                        ...licenseModalProps,
-                                                        show: true,
-                                                        title: "Edit Licence",
-                                                        formValue: { ...record },
-                                                        onOk: (data) => {
-                                                                updateLicense(record.id, data.name ?? record.name);
-                                                                setLicenseModalProps((p) => ({ ...p, show: false }));
-                                                        },
-                                                })
-                                        }
-                                >
-                                        <Iconify icon="solar:pen-bold-duotone" size={18} />
-                                </IconButton>
+                                <div className="flex items-center gap-2">
+                                        <Tag color="processing">{record.name}</Tag>
+                                        <IconButton
+                                                onClick={() =>
+                                                        setLicenseModalProps({
+                                                                ...licenseModalProps,
+                                                                show: true,
+                                                                title: "Edit Licence",
+                                                                formValue: { ...record },
+                                                                onOk: (data) => {
+                                                                        updateLicense(record.id, data.name ?? record.name);
+                                                                        setLicenseModalProps((p) => ({ ...p, show: false }));
+                                                                },
+                                                        })
+                                                }
+                                        >
+                                                <Iconify icon="solar:pen-bold-duotone" size={18} />
+                                        </IconButton>
+                                </div>
                         ),
                 },
         ];
@@ -393,23 +429,26 @@ export default function StockPage() {
                                                                                 <Tag color={color}>{text}</Tag>
                                                                                 <IconButton
                                                                                         onClick={() =>
-                                                                                                setModelModalProps({
-                                                                                                        ...modelModalProps,
-                                                                                                        licenses,
-                                                                                                        show: true,
-                                                                                                        title: "Edit",
-                                                                                                        formValue: { ...m, licenseId: record.id },
-                                                                                                        onOk: (data) => {
-                                                                                                                updateModel(record.id, m.id, {
-                                                                                                                        name: data.name ?? m.name,
-                                                                                                                        quantity: data.quantity ?? m.quantity,
-                                                                                                                        minStock: data.minStock ?? m.minStock,
-                                                                                                                });
-                                                                                                                setModelModalProps((p) => ({ ...p, show: false }));
-                                                                                                        },
-                                                                                                })
-                                                                                        }
-                                                                                >
+                                                        setModelModalProps({
+                                                                ...modelModalProps,
+                                                                licenses,
+                                                                show: true,
+                                                                isEdit: true,
+                                                                title: "Edit",
+                                                                formValue: { ...m, licenseId: record.id },
+                                                                onOk: (data) => {
+                                                                        updateModel(record.id, m.id, {
+                                                                                name: data.name ?? m.name,
+                                                                                licenseId: data.licenseId ?? record.id,
+                                                                        });
+                                                                        if (data.newSize) {
+                                                                                updateVariant(record.id, m.id, data.newSize, {} as Product);
+                                                                        }
+                                                                        setModelModalProps((p) => ({ ...p, show: false }));
+                                                                },
+                                                        })
+                                                }
+                                        >
                                                                                         <Iconify icon="solar:pen-bold-duotone" size={18} />
                                                                                 </IconButton>
                                                                                 <Popconfirm

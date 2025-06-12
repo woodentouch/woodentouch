@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductDTO {
+    private Long licenseId;
     private Long id;
     private String model;
     private String size;

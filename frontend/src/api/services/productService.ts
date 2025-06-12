@@ -1,6 +1,7 @@
 import apiClient from "../apiClient";
 
 export interface Product {
+        licenseId: number;
         id: number;
         model: string;
         size: string;
