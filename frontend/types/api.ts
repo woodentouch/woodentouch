@@ -16,3 +16,8 @@ export interface LicenseStatDTO {
         count: number;
         percentage: number;
 }
+
+export interface WeeklyAverageDTO {
+        week: number;
+        average: number;
+}

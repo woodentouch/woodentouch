@@ -1,5 +1,5 @@
 import apiClient from "../apiClient";
-import type { BestSellerDTO, LicenseStatDTO } from "#/api";
+import type { BestSellerDTO, LicenseStatDTO, WeeklyAverageDTO } from "#/api";
 
 export enum StatsApi {
 	WeeklySales = "/stats/getWeeklySales",
@@ -11,7 +11,8 @@ export enum StatsApi {
 	TotalStockValue = "/stats/getTotalStockValue",
 	TotalStockCount = "/stats/getTotalStockCount",
 	BestSellersLastEvent = "/stats/getBestSellersLastEvent",
-	LicenseSalesStats = "/stats/getLicenseSalesStats",
+        LicenseSalesStats = "/stats/getLicenseSalesStats",
+        AverageBasketByWeek = "/stats/getAverageBasketByWeek",
 }
 
 const getWeeklySales = () =>
@@ -29,11 +30,13 @@ const getLast20Sales = () =>
 const getTotalStockValue = () =>
 	apiClient.get<number>({ url: StatsApi.TotalStockValue });
 const getTotalStockCount = () =>
-	apiClient.get<number>({ url: StatsApi.TotalStockCount });
+        apiClient.get<number>({ url: StatsApi.TotalStockCount });
 const getBestSellersLastEvent = () =>
-	apiClient.get<BestSellerDTO[]>({ url: StatsApi.BestSellersLastEvent });
+        apiClient.get<BestSellerDTO[]>({ url: StatsApi.BestSellersLastEvent });
 const getLicenseSalesStats = () =>
-	apiClient.get<LicenseStatDTO[]>({ url: StatsApi.LicenseSalesStats });
+        apiClient.get<LicenseStatDTO[]>({ url: StatsApi.LicenseSalesStats });
+const getAverageBasketByWeek = () =>
+        apiClient.get<WeeklyAverageDTO[]>({ url: StatsApi.AverageBasketByWeek });
 
 export default {
 	getWeeklySales,
@@ -44,6 +47,7 @@ export default {
 	getLast20Sales,
 	getTotalStockValue,
 	getTotalStockCount,
-	getBestSellersLastEvent,
-	getLicenseSalesStats,
+        getBestSellersLastEvent,
+        getLicenseSalesStats,
+        getAverageBasketByWeek,
 };

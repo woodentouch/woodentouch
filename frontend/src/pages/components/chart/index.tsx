@@ -30,11 +30,11 @@ export default function ChartPage() {
 						<ChartArea />
 					</Card>
 				</Col>
-				<Col span={23} lg={12}>
-					<Card title="Line">
-						<ChartLine />
-					</Card>
-				</Col>
+                                <Col span={23} lg={12}>
+                                        <Card title="Évolution du Panier moyen">
+                                                <ChartLine />
+                                        </Card>
+                                </Col>
 
 				<Col span={23} lg={12}>
 					<Card title="Column Single">

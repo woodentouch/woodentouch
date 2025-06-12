@@ -2,6 +2,7 @@ package com.wooden.project.service;
 
 import com.wooden.project.dto.BestSellerDTO;
 import com.wooden.project.dto.LicenseStatDTO;
+import com.wooden.project.dto.WeeklyAverageDTO;
 import com.wooden.project.model.Panier;
 import com.wooden.project.model.evenement;
 import com.wooden.project.repository.UserRepo;
@@ -68,6 +69,21 @@ public class StatisticsService {
 
     public List<Panier> getLast20Sales() {
         return panierRepo.findTop20ByOrderByDateAjoutDesc();
+    }
+
+    public List<WeeklyAverageDTO> getAverageBasketByWeek(int weeks) {
+        LocalDate start = LocalDate.now().minusWeeks(weeks - 1);
+        Date startDate = Date.from(start.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        List<java.util.Map<String, Object>> results = panierRepo.findWeeklyAverage(startDate);
+        List<WeeklyAverageDTO> averages = new ArrayList<>();
+
+        for (java.util.Map<String, Object> result : results) {
+            Integer week = ((Number) result.get("week")).intValue();
+            Double average = ((Number) result.get("average")).doubleValue();
+            averages.add(new WeeklyAverageDTO(week, average));
+        }
+
+        return averages;
     }
     
     public List<BestSellerDTO> getBestSellersLastEvent() {
