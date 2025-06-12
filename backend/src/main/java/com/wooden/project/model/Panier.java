@@ -45,12 +45,22 @@ public class Panier {
     @Column(name = "dateAjout")
     private Date dateAjout;
 
+    @Column(name = "sumup_id", unique = true)
+    private String sumupId;
+
     public Panier(User user, Date dateAjout, String mode_paiement, Double prix_panier, evenement event) {
         this.user = user;
         this.dateAjout = dateAjout;
         this.mode_paiement = mode_paiement;
         this.prix_panier = prix_panier;
         this.event = event;
+    }
+
+    public Panier(String sumupId, Date dateAjout, String mode_paiement, Double prix_panier) {
+        this.sumupId = sumupId;
+        this.dateAjout = dateAjout;
+        this.mode_paiement = mode_paiement;
+        this.prix_panier = prix_panier;
     }
 
     public String getMode_paiement() {
