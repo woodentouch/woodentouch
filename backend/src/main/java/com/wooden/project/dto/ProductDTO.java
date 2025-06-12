@@ -13,4 +13,5 @@ public class ProductDTO {
     private String size;
     private int quantity;
     private int stockMinimum;
+    private double value;
 }

@@ -9,6 +9,7 @@ import com.wooden.project.model.licence;
 import com.wooden.project.repository.produitRepo;
 import com.wooden.project.repository.licenceRepo;
 import com.wooden.project.repository.StockRepository;
+import com.wooden.project.repository.PanierItemRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +23,13 @@ public class InventoryController {
     private final licenceRepo licenceRepository;
     private final produitRepo productRepository;
     private final StockRepository stockRepository;
+    private final PanierItemRepository panierItemRepository;
 
-    public InventoryController(licenceRepo licenceRepository, produitRepo productRepository, StockRepository stockRepository) {
+    public InventoryController(licenceRepo licenceRepository, produitRepo productRepository, StockRepository stockRepository, PanierItemRepository panierItemRepository) {
         this.licenceRepository = licenceRepository;
         this.productRepository = productRepository;
         this.stockRepository = stockRepository;
+        this.panierItemRepository = panierItemRepository;
     }
 
     @GetMapping("/licenses")
@@ -42,31 +45,26 @@ public class InventoryController {
     }
 
     @GetMapping("/products/{licenseId}")
-    public Result<List<ProductDTO>> getProducts(@PathVariable Long licenseId) {
-        List<Stock> stocks = stockRepository.findByLicenseId(licenseId);
-        List<ProductDTO> products = stocks.stream()
-                .map(s -> new ProductDTO(
-                        s.getId_produit().getId_produit(),
-                        s.getId_produit().getModele(),
-                        s.getId_produit().getTaille().name(),
-                        s.getQuantite(),
-                        s.getStockMinimum() != null ? s.getStockMinimum() : 0
-                ))
-                .collect(Collectors.toList());
-        return Result.success(products);
+    public Result<List<ProductDTO>> getProductsPath(@PathVariable Long licenseId) {
+        return getProducts(licenseId);
     }
 
     @GetMapping("/products")
-    public Result<List<ProductDTO>> getAllProducts() {
-        List<Stock> stocks = stockRepository.findAll();
+    public Result<List<ProductDTO>> getProducts(@RequestParam(value = "licenseId", required = false) Long licenseId) {
+        List<Stock> stocks = licenseId != null ? stockRepository.findByLicenseId(licenseId) : stockRepository.findAll();
         List<ProductDTO> products = stocks.stream()
-                .map(s -> new ProductDTO(
-                        s.getId_produit().getId_produit(),
-                        s.getId_produit().getModele(),
-                        s.getId_produit().getTaille().name(),
-                        s.getQuantite(),
-                        s.getStockMinimum() != null ? s.getStockMinimum() : 0
-                ))
+                .map(s -> {
+                    Double avg = panierItemRepository.getAveragePriceByProductId(s.getId_produit().getId_produit());
+                    double value = (avg != null ? avg : 0) * s.getQuantite();
+                    return new ProductDTO(
+                            s.getId_produit().getId_produit(),
+                            s.getId_produit().getModele(),
+                            s.getId_produit().getTaille().name(),
+                            s.getQuantite(),
+                            s.getStockMinimum() != null ? s.getStockMinimum() : 0,
+                            value
+                    );
+                })
                 .collect(Collectors.toList());
         return Result.success(products);
     }

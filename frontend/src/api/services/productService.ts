@@ -6,6 +6,7 @@ export interface Product {
         size: string;
         quantity: number;
         stockMinimum: number;
+        value: number;
 }
 
 // Endpoints shouldn't start with /api because axios baseURL already uses it.

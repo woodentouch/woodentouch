@@ -24,4 +24,7 @@ public interface PanierItemRepository extends JpaRepository<PanierItem, Long> {
      */
     @Query("SELECT pi FROM PanierItem pi WHERE pi.panier.id_panier = :idPanier")
     List<PanierItem> findByPanierId(@Param("idPanier") Long idPanier);
+
+    @Query("SELECT AVG(pi.prix_unitaire) FROM PanierItem pi WHERE pi.produit.id_produit = :productId")
+    Double getAveragePriceByProductId(@Param("productId") Long productId);
 }

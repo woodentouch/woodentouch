@@ -13,6 +13,7 @@ import LicenseModal, { type LicenseModalProps } from "./license-modal";
 interface ModelRow extends Model {
         licenseId: string;
         variants: Product[];
+        value: number;
 }
 
 export default function StockPage() {
@@ -45,6 +46,7 @@ export default function StockPage() {
                                 const existing = grouped.get(key);
                                 if (existing) {
                                         existing.quantity += p.quantity;
+                                        existing.value += p.value;
                                         existing.variants.push(p);
                                 } else {
                                         grouped.set(key, {
@@ -54,6 +56,7 @@ export default function StockPage() {
                                                 minStock: p.stockMinimum,
                                                 licenseId: licenseId ?? "",
                                                 variants: [p],
+                                                value: p.value,
                                         });
                                 }
                         });
@@ -151,7 +154,7 @@ export default function StockPage() {
                 {
                         title: "Modèle",
                         dataIndex: "name",
-                        render: (name: string, record) => `${name} (${record.quantity})`,
+                        render: (name: string, record) => `${name} (${record.value.toFixed(2)}€)`,
                 },
                 {
                         title: "Stock Minimum",
@@ -228,6 +231,28 @@ export default function StockPage() {
                         dataIndex: "size",
                 },
                 { title: "Quantité", dataIndex: "quantity" },
+                { title: "Stock Minimum", dataIndex: "stockMinimum" },
+                {
+                        title: "Status",
+                        dataIndex: "quantity",
+                        render: (_, record) => {
+                                let color = "success";
+                                let text = "Satisfaisant";
+                                if (record.quantity === 0) {
+                                        color = "error";
+                                        text = "Stock zéro";
+                                } else if (record.quantity < record.stockMinimum) {
+                                        color = "warning";
+                                        text = "Graveur nécessaire";
+                                }
+                                return <Tag color={color}>{text}</Tag>;
+                        },
+                },
+                {
+                        title: "Valeur",
+                        dataIndex: "value",
+                        render: (v: number) => `${v.toFixed(2)}€`,
+                },
         ];
 
 	const licenseColumns: ColumnsType<License> = [
