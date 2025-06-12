@@ -46,24 +46,23 @@ function Analysis() {
 	});
 
 	// Exclude 'support' entries and sort descending
-	const filteredBestSellers = bestSellers
-		?.filter(
+	const filteredBestSellers = (bestSellers ?? [])
+		.filter(
 			(s) =>
 				!s.productName.toLowerCase().includes("support") &&
-				!s.licenseName.toLowerCase().includes("support")
+				!s.licenseName.toLowerCase().includes("support"),
 		)
-		.sort((a, b) => b.total - a.total) || [];
+		.sort((a, b) => b.total - a.total);
 	// Transform best sellers for bar chart by total revenue
 	const bestSellersData = filteredBestSellers.map((s) => s.total);
 	const bestSellersCategories = filteredBestSellers.map(
-		(s) => `${s.productName} (${s.licenseName})`
+		(s) => `${s.productName} (${s.licenseName})`,
 	);
 
 	// Group license stats into top 4 and 'Other'
-	const sortedLicenseStats =
-		licenseStats
-			?.filter((s) => !s.licenseName.toLowerCase().includes("support"))
-			.sort((a, b) => b.percentage - a.percentage) || [];
+	const sortedLicenseStats = (licenseStats ?? [])
+		.filter((s) => !s.licenseName.toLowerCase().includes("support"))
+		.sort((a, b) => b.percentage - a.percentage);
 	const totalCount = sortedLicenseStats.reduce((sum, s) => sum + s.count, 0);
 	const top4 = sortedLicenseStats.slice(0, 4);
 	const otherCount = sortedLicenseStats
@@ -84,7 +83,7 @@ function Analysis() {
 	const barColors = filteredBestSellers.map((_, i) =>
 		i % 2 === 0
 			? themeVars.colors.palette.success.default
-			: themeVars.colors.palette.error.default
+			: themeVars.colors.palette.error.default,
 	);
 	// Replace pieColors with a fixed high-contrast palette for pieData
 	const allPieColors = [
@@ -181,8 +180,7 @@ function Analysis() {
 				<Col span={24} lg={12} xl={16}>
 					<Card title="Best-sellers de la dernière convention">
 						{/* Display bestSellers data here */}
-						{bestSellersData.length > 0 &&
-							bestSellersCategories.length > 0 ? (
+						{bestSellersData.length > 0 && bestSellersCategories.length > 0 ? (
 							<ChartBar
 								series={bestSellersData}
 								categories={bestSellersCategories}
