@@ -5,9 +5,10 @@ export interface License {
 	name: string;
 }
 
-const getLicenses = () => apiClient.get<License[]>({ url: "/api/licenses" });
+const getLicenses = () => apiClient.get<License[]>({ url: "/licences" });
 
-const addLicense = (name: string) => apiClient.post<void>({ url: "/api/addLicense", data: { name } });
+const addLicense = (name: string) =>
+        apiClient.post<void>({ url: "/licences", data: { name } });
 
 export default {
 	getLicenses,

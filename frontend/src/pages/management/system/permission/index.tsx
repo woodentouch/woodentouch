@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Card, Dropdown, Menu, Popconfirm, Tag, InputNumber, Table } from "antd";
+import { Button, Card, Dropdown, Popconfirm, Tag, InputNumber, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 
 import { IconButton, Iconify } from "@/components/icon";
@@ -27,7 +27,7 @@ export default function StockPage() {
 
 	const loadProducts = async (licenseId: string) => {
 		try {
-			const products = await productService.getProducts(Number(licenseId));
+                       const products = await productService.getProductsByLicense(Number(licenseId));
 			setLicenses((prev) =>
 				prev.map((l) =>
 					l.id === licenseId
@@ -91,21 +91,19 @@ export default function StockPage() {
 		onCancel: () => setLicenseModalProps((p) => ({ ...p, show: false })),
 	});
 
-	const openNewMenu = (
-		<Menu
-			items={[
-				{ key: "lic", label: "Créer une nouvelle licence" },
-				{ key: "model", label: "Ajouter un modèle" },
-			]}
-			onClick={(info) => {
-				if (info.key === "lic") {
-					setLicenseModalProps((p) => ({ ...p, show: true }));
-				} else {
-					setModelModalProps((p) => ({ ...p, show: true, licenses }));
-				}
-			}}
-		/>
-	);
+        const openNewMenu = {
+                items: [
+                        { key: "lic", label: "Créer une nouvelle licence" },
+                        { key: "model", label: "Ajouter un modèle" },
+                ],
+                onClick: (info: { key: string }) => {
+                        if (info.key === "lic") {
+                                setLicenseModalProps((p) => ({ ...p, show: true }));
+                        } else {
+                                setModelModalProps((p) => ({ ...p, show: true, licenses }));
+                        }
+                },
+        };
 
 	const deleteModel = (licenseId: string, modelId: string) => {
 		setLicenses((prev) =>
@@ -216,9 +214,9 @@ export default function StockPage() {
 		<Card
 			title="Stock"
 			extra={
-				<Dropdown overlay={openNewMenu} trigger={["click"]}>
-					<Button type="primary">New</Button>
-				</Dropdown>
+                                <Dropdown menu={openNewMenu} trigger={["click"]}>
+                                        <Button type="primary">New</Button>
+                                </Dropdown>
 			}
 		>
 			<Table
