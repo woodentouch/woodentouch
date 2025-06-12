@@ -1,48 +1,91 @@
 import { Space, Tag, Typography } from "antd";
 import Table, { type ColumnsType } from "antd/es/table";
+import { useQuery } from "@tanstack/react-query";
 
 import Card from "@/components/card";
 import { IconButton, Iconify } from "@/components/icon";
 import Scrollbar from "@/components/scrollbar";
+import salesService, { type SalesData, type SalesItem } from "@/api/services/salesService";
 
-interface DataType {
+interface PanierDataType {
 	key: string;
-	id: string;
-	category: string;
-	price: string;
-	status: string;
+	vente: string; // Combined list of products
+	prix: string;  // Total price of the panier
+	canal_de_vente: string;
+	action: string;
+	dateAjout: string;
 }
 
 export default function NewInvoice() {
-	const columns: ColumnsType<DataType> = [
+	const { data: salesData, isLoading, error } = useQuery({
+		queryKey: ['latest-sales'],
+		queryFn: () => salesService.getLatestSales(),
+	});
+
+	// Transform API data to match table format - one row per panier
+	const tableData: PanierDataType[] = salesData?.map((panier: SalesData) => {
+		// Calculate total price (remove € sign, convert to number, sum, then add € sign back)
+		const totalPrice = panier.items
+			.reduce((sum, item) => sum + parseFloat(item.prix.replace('€', '')), 0)
+			.toFixed(1) + '€';
+
+		return {
+			key: `${panier.panierId}`,
+			vente: panier.items.map(item => item.vente).join(' • '), // Use bullet points instead of commas
+			prix: totalPrice,
+			canal_de_vente: panier.canal_de_vente,
+			action: "•••",
+			dateAjout: panier.dateAjout,
+		};
+	})
+		// Sort by date descending (newest first)
+		?.sort((a, b) => new Date(b.dateAjout).getTime() - new Date(a.dateAjout).getTime())
+		// Limit to most recent 20 
+		?.slice(0, 20)
+		|| [];
+
+	const columns: ColumnsType<PanierDataType> = [
 		{
-			title: "InvoiceId",
-			dataIndex: "id",
-			key: "id",
+			title: "Vente",
+			dataIndex: "vente",
+			key: "vente",
+			render: (text) => (
+				<Typography.Text
+					style={{
+						maxWidth: 300,
+						display: 'block',
+						whiteSpace: 'normal',
+						lineHeight: '1.5em'
+					}}
+				>
+					{text}
+				</Typography.Text>
+			),
+		},
+		{
+			title: "Prix Total",
+			dataIndex: "prix",
+			key: "prix",
 			render: (text) => <span>{text}</span>,
 		},
 		{
-			title: "Category",
-			dataIndex: "category",
-			key: "category",
-		},
-		{
-			title: "Price",
-			dataIndex: "price",
-			key: "price",
-			render: (text) => <span>{text}</span>,
-		},
-		{
-			title: "Status",
-			key: "status",
-			dataIndex: "status",
-			render: (_status) => {
-				const status = _status as string;
+			title: "Canal de vente",
+			key: "canal_de_vente",
+			dataIndex: "canal_de_vente",
+			render: (status) => {
 				let color = "success";
-				if (status === "Progress") color = "gold";
-				if (status === "Out of Date") color = "red";
+				if (status === "Made in Asia") color = "cyan";
+				if (status === "Site internet") color = "green";
+				if (status === "Etsy") color = "orange";
+				if (status === "Japan Expo 2025") color = "blue";
+				if (status === "Paris Manga 2025") color = "purple";
 				return <Tag color={color}>{status}</Tag>;
 			},
+		},
+		{
+			title: "Date",
+			dataIndex: "dateAjout",
+			key: "dateAjout",
 		},
 		{
 			title: "Action",
@@ -57,52 +100,19 @@ export default function NewInvoice() {
 		},
 	];
 
-	const data: DataType[] = [
-		{
-			key: "1",
-			id: "INV-1990",
-			category: "Android",
-			price: "$83.74",
-			status: "Paid",
-		},
-		{
-			key: "2",
-			id: "INV-1991",
-			category: "Mac",
-			price: "$97.14",
-			status: "Out of Date",
-		},
-		{
-			key: "3",
-			id: "INV-1992",
-			category: "Windows",
-			price: "$68.71",
-			status: "Progress",
-		},
-		{
-			key: "4",
-			id: "INV-1993",
-			category: "Android",
-			price: "$85.21",
-			status: "Paid",
-		},
-		{
-			key: "5",
-			id: "INV-1994",
-			category: "Mac",
-			price: "$53.17",
-			status: "Paid",
-		},
-	];
-
 	return (
 		<Card className="flex-col">
 			<header className="self-start">
-				<Typography.Title level={5}>New Invoice</Typography.Title>
+				<Typography.Title level={5}>Dernières ventes</Typography.Title>
 			</header>
 			<main className="w-full">
 				<Scrollbar>
-					<Table columns={columns} dataSource={data} />
+					<Table
+						columns={columns}
+						dataSource={tableData}
+						loading={isLoading}
+						pagination={false}
+					/>
 				</Scrollbar>
 			</main>
 		</Card>

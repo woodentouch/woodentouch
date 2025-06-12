@@ -1,29 +1,32 @@
 package com.wooden.project.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Table(name = "user")
+@Table(name = "users")
 @Getter
 @Setter
 @NoArgsConstructor
-
+@AllArgsConstructor
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_user;
-    private String name_user;
-    @Column(unique = true, nullable = false)
-    private String email_user;
-    private String password_user;
 
-    public User(String name_user, String email_user, String password_user) {
-        this.name_user = name_user;
-        this.email_user = email_user;
-        this.password_user = password_user;
+    private String name;
+
+    @Column(unique = true, nullable = false)
+    private String email;
+
+    // Supprimé @JsonIgnore pour permettre la sérialisation du mot de passe
+    private String password;
+
+    public User(String name, String email, String password) {
+        this.name = name;
+        this.email = email;
+        this.password = password;
     }
 }

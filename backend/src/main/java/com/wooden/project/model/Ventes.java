@@ -3,8 +3,6 @@ package com.wooden.project.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-
 @Entity
 @Table(name = "ventes")
 @Getter
@@ -20,27 +18,13 @@ public class Ventes {
     @JoinColumn(name = "id_product", nullable = false)
     private Produit product;
 
-    @ManyToOne
-    @JoinColumn(name = "id_user", nullable = false)
-    private User user;
+    private Integer nombreVentes;
 
-    private Double prix;
+    private Double prixTotal;
 
-    private String modeDePaiement;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
-
-    @ManyToOne
-    @JoinColumn(name = "event_id")
-    private evenement event;
-
-    public Ventes(Produit product, User user, Double prix, String modeDePaiement, Date date, evenement event) {
+    public Ventes(Produit product, Integer nombreVentes, Double prixTotal) {
         this.product = product;
-        this.user = user;
-        this.prix = prix;
-        this.modeDePaiement = modeDePaiement;
-        this.date = date;
-        this.event = event;
+        this.nombreVentes = nombreVentes;
+        this.prixTotal = prixTotal;
     }
 }

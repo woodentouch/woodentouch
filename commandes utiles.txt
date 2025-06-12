@@ -1,1 +1,16 @@
 npm run dev --> lancer server
+
+npm install -g pnpm
+pnpm install
+pnpm dev
+
+
+acces token summup
+
+{
+    "access_token": "at_classic_3Es9oM9i0sEL5LTvBZK3PoR6oyPXOwgUyXmywpIBwEsZkd4CcLRZO",
+    "expires_in": 3600,
+    "refresh_token": "rt_classic_rJHBr40H6tZ9ft2zlD17lixBKD5O94pqYIHahsbi5Q7oaCUWDJKTF",
+    "scope": "transactions.history",
+    "token_type": "Bearer"
+}

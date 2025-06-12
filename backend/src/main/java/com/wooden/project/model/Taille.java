@@ -1,5 +1,5 @@
 package com.wooden.project.model;
 
 public enum Taille {
-    S, M, L, XL
+    XS, S, M, L, XL
 }

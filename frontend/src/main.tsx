@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // vercel analytics
 import { Analytics } from "@vercel/analytics/react";
 // react
-import { Suspense } from "react";
+import React, { Suspense } from "react";
 import ReactDOM from "react-dom/client";
 // helmet
 import { HelmetProvider } from "react-helmet-async";
@@ -31,18 +31,22 @@ const charAt = `
   `;
 console.info(`%c${charAt}`, "color: #5BE49B");
 
-const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+const root = ReactDOM.createRoot(
+	document.getElementById("root") as HTMLElement,
+);
 
 root.render(
 	<HelmetProvider>
-		<QueryClientProvider client={new QueryClient()}>
-			{/* <ReactQueryDevtools initialIsOpen={false} /> */}
-			<Suspense>
-				<ProgressBar />
-				<Analytics />
-				<App />
-			</Suspense>
-		</QueryClientProvider>
+		<React.StrictMode>
+			<QueryClientProvider client={new QueryClient()}>
+				{/* <ReactQueryDevtools initialIsOpen={false} /> */}
+				<Suspense>
+					<ProgressBar />
+					<Analytics />
+					<App />
+				</Suspense>
+			</QueryClientProvider>
+		</React.StrictMode>
 	</HelmetProvider>,
 );
 
