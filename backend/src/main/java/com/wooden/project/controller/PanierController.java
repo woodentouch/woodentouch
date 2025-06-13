@@ -88,7 +88,8 @@ public class PanierController {
             List<Map<String, Object>> items = panier.getItems().stream().map(item -> {
                 Map<String, Object> itemData = new HashMap<>();
                 Produit produit = item.getProduit();
-                String productInfo = produit.getModele();
+                String productInfo = produit.getModele() + "(" +
+                        produit.getTaille().name().toLowerCase() + ")";
                 itemData.put("vente", productInfo);
                 itemData.put("prix", item.getPrix_unitaire() + "€");
                 return itemData;

@@ -71,8 +71,8 @@ public class StatisticsService {
     }
     
     public List<BestSellerDTO> getBestSellersLastEvent() {
-        // Get the latest event first
-        List<evenement> latestEvents = panierRepo.findLatestEvent();
+        // Get the latest event that has at least one sale
+        List<evenement> latestEvents = panierRepo.findLatestEventWithSales();
         if (latestEvents.isEmpty()) {
             return new ArrayList<>();
         }
