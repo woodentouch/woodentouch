@@ -59,6 +59,10 @@ export default function CaissePage() {
                        ? products
                        : LOCAL_PRODUCTS;
 
+       const uniqueProducts = productList.filter(
+               (p, index, arr) => arr.findIndex((q) => q.model === p.model) === index
+       );
+
 	const { data: lastSales } = useQuery<unknown[]>({
 		queryKey: ["lastSales"],
 		queryFn: () => statsService.getLast20Sales(),
@@ -166,7 +170,7 @@ export default function CaissePage() {
 
         const onCheckout = () => {
                 const payload = {
-                        mode_paiement: "CB",
+                        mode_paiement: "espece",
                         prix_panier: total,
                         dateAjout: new Date().toISOString().slice(0, 10),
                         items: items.map((it) => ({
@@ -228,18 +232,20 @@ export default function CaissePage() {
 						value={search}
 						onChange={(e) => setSearch(e.target.value)}
 					/>
-                                       {productList.map((p) => (
-                                                        <Card key={p.id} className="w-full">
-                                                                <Typography.Text>{p.model}</Typography.Text>
-								<div className="mt-2 flex gap-2 flex-wrap">
-									{VARIANTS.map((v) => (
-										<Button key={v} onClick={() => onAddItem(p, v)}>
-											{v} ({PRICE_MAP[v]}€)
-										</Button>
-									))}
-								</div>
-							</Card>
-						))}
+                                       <div className="grid grid-cols-2 gap-2">
+                                               {uniqueProducts.map((p) => (
+                                                       <Card key={p.id} className="w-full">
+                                                               <Typography.Text>{p.model}</Typography.Text>
+                                                               <div className="mt-2 flex gap-2 flex-wrap">
+                                                                       {VARIANTS.map((v) => (
+                                                                               <Button key={v} onClick={() => onAddItem(p, v)}>
+                                                                               {v} ({PRICE_MAP[v]}€)
+                                                                               </Button>
+                                                                       ))}
+                                                               </div>
+                                                       </Card>
+                                               ))}
+                                       </div>
 				</Space>
 			</Modal>
 			<Modal
