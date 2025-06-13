@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.wooden.project.dto.BestSellerDTO;
 import com.wooden.project.dto.LicenseStatDTO;
+import com.wooden.project.dto.WeeklyAverageDTO;
 
 @RestController
 @RequestMapping("/api/stats")
@@ -64,6 +65,11 @@ public class StatsController {
     @GetMapping("/getLast20Sales")
     public Object getLast20Sales() {
         return statisticsService.getLast20Sales();
+    }
+
+    @GetMapping("/getAverageBasketByWeek")
+    public List<WeeklyAverageDTO> getAverageBasketByWeek() {
+        return statisticsService.getAverageBasketByWeek(20);
     }
     
     @GetMapping("/getBestSellersLastEvent")

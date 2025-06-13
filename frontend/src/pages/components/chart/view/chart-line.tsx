@@ -1,36 +1,34 @@
 import Chart from "@/components/chart/chart";
 import useChart from "@/components/chart/useChart";
+import { useQuery } from "@tanstack/react-query";
+import statsService from "@/api/services/statsService";
 
-const series = [
-	{
-		name: "Desktops",
-		data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
-	},
-];
 export default function ChartLine() {
-	const chartOptions = useChart({
-		xaxis: {
-			categories: [
-				"Jan",
-				"Feb",
-				"Mar",
-				"Apr",
-				"May",
-				"Jun",
-				"Jul",
-				"Aug",
-				"Sep",
-			],
-		},
-		tooltip: {
-			x: {
-				show: false,
-			},
-			marker: { show: false },
-		},
-	});
+        const { data } = useQuery({
+                queryKey: ["averageBasketByWeek"],
+                queryFn: statsService.getAverageBasketByWeek,
+        });
 
-	return (
-		<Chart type="line" series={series} options={chartOptions} height={320} />
-	);
+        const series = [
+                {
+                        name: "Panier moyen",
+                        data: data ? data.map((d) => d.average) : [],
+                },
+        ];
+
+        const chartOptions = useChart({
+                xaxis: {
+                        categories: data ? data.map((d) => `S${d.week}`) : [],
+                },
+                tooltip: {
+                        y: {
+                                formatter: (value: number) => `${value.toFixed(2)} €`,
+                        },
+                        marker: { show: false },
+                },
+        });
+
+        return (
+                <Chart type="line" series={series} options={chartOptions} height={320} />
+        );
 }
