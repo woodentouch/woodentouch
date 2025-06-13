@@ -20,7 +20,7 @@ class SalesService {
     }
 
     createSale(data: unknown) {
-        return apiClient.post<void>({ url: '/paniers', data });
+        return apiClient.post<void>({ url: '/ventes/register', data });
     }
 }
 
