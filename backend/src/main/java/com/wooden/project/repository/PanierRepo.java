@@ -44,4 +44,6 @@ public interface PanierRepo extends JpaRepository<Panier, Long> {
            "FROM PanierItem pi JOIN pi.produit.licence_id l WHERE YEAR(pi.panier.dateAjout) = YEAR(CURRENT_DATE) " +
            "GROUP BY l.name_license")
     List<Map<String, Object>> findLicenseSalesStats();
+
+    java.util.Optional<Panier> findBySumupId(String sumupId);
 }
