@@ -109,7 +109,7 @@ function Analysis() {
 								? `${chiffreAffaire.toLocaleString("fr-FR")} €`
 								: "--"
 						}
-						subtitle="Chiffre d'affaire"
+						subtitle="Chiffre d'affaires"
 						style={{
 							color: themeVars.colors.palette.success.dark,
 							backgroundColor: `rgba(${themeVars.colors.palette.success.defaultChannel}, .2)`,
@@ -170,7 +170,7 @@ function Analysis() {
 					{/* </Card> */}
 				</Col>
 				{/* <Col span={24} lg={12} xl={8}>
-					<Card title="Plateforme de ventes">
+					<Card title="Répartition par licence">
 						<ChartBar />
 					</Card>
 				</Col> */}
