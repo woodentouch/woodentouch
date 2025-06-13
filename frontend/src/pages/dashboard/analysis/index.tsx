@@ -192,7 +192,7 @@ function Analysis() {
 					</Card>
 				</Col>
 				<Col span={24} lg={12} xl={8}>
-					<Card title="Plateforme de ventes">
+					<Card title="Répartition des ventes par licence">
 						{/* Display licenseStats data here */}
 						{licenseStatsData.length > 0 && licenseStatsLabels.length > 0 ? (
 							<ChartPie
